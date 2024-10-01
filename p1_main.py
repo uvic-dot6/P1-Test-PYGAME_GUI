@@ -1,6 +1,8 @@
+import constants as c
 import pygame as pg
 from pygame.locals import *
 import pygame_gui as pgui
+
 
 
 class Tablero:
@@ -31,8 +33,8 @@ class Tablero:
             self.tam_fila += 1
         mapa.close()
         
-        #for x in self.matriz:
-            #print(x)
+        for x in self.matriz:
+            print(x)
     
     def draw_matriz(self, screen, tam_celda):
         for y in range(self.tam_fila):
@@ -42,7 +44,7 @@ class Tablero:
                 pg.draw.rect(screen, (81, 81, 81), pg.Rect(x * tam_celda, y * tam_celda, tam_celda, tam_celda), 1)
         
     def draw_box(self, x, y, screen, tam_celda):
-        color = self.colores.get(self.matriz[y][x], (0, 0, 0))
+        color = self.colores.get(self.matriz[x][y], (0, 0, 0))
         pg.draw.rect(screen, color, pg.Rect(x * tam_celda, y * tam_celda, tam_celda, tam_celda))
         pg.draw.rect(screen, (81, 81, 81), pg.Rect(x * tam_celda, y * tam_celda, tam_celda, tam_celda), 1)
 
@@ -50,28 +52,125 @@ class Tablero:
         self.matriz[x][y] = new_value
         self.draw_box(x, y, screen, tam_celda)
 
+    def current_value(self, x, y):
+        return self.matriz[x][y]
+
 class App:
     tam_celda = 32
     screen_width = 0
     screen_height = 0
-
+    selected_cell = None
+    
     def __init__(self, tam_col, tam_fila):
         pg.init()
-        flags = RESIZABLE
+        pg.display.set_caption("Practica 1")
+        #lags = RESIZABLE
+        self.clock = pg.time.Clock()
         self.definir_ancho_alto(tam_col, tam_fila)
-        self.screen = pg.display.set_mode((self.screen_width, self.screen_height), flags)
+        self.screen = pg.display.set_mode((self.screen_width + c.SIDE_PANEL, self.screen_height))
+        #self.screen = pg.display.set_mode((self.screen_width + c.SIDE_PANEL, self.screen_height), flags)
+        
+        self.ui_manager = pgui.UIManager((self.screen_width + c.SIDE_PANEL, self.screen_height))
+        #self.recreate_ui()
+        self.hello_button = None
+        self.test_drop_down = None
+        
+        # Inicializa los botones
+        self.init_ui()
+
         self.running = True
 
     def definir_ancho_alto(self, tam_col, tam_fila):
         self.screen_width = self.tam_celda * tam_col
         self.screen_height = self.tam_celda * tam_fila
+    
+    def init_ui(self):
+         # Inicializa los elementos de UI sin mostrarlos al principio
+        
+        self.hello_button = pgui.elements.UIButton(
+            relative_rect=pg.Rect((self.screen_width + 20, 20), (100, 50)),
+            text = 'Say Hello',
+            manager = self.ui_manager,
+            visible = False  # Se crea invisible al principio
+        )
 
+        self.test_drop_down = pgui.elements.UIDropDownMenu(
+            ['1', '2', '3', '4', '5', '6', '7'],
+            '1',
+            pg.Rect((self.screen_width + 20, 80), (100, 50)),
+            self.ui_manager,
+            visible = False  # Se crea invisible al principio
+        )
+    
+    def update_ui(self, cell_pos, tablero):
+        # Actualiza la posición de los botones y los valores
+        self.hello_button.set_position((self.screen_width + 20, 20))
+        
+        # Elimina el menú desplegable existente
+        if self.test_drop_down is not None:
+            self.test_drop_down.kill()
+
+        # Crea un nuevo menú desplegable con el valor actualizado de la celda seleccionada
+        current_value = str(tablero.current_value(cell_pos[0], cell_pos[1]))
+        self.test_drop_down = pgui.elements.UIDropDownMenu(
+            ['1', '2', '3', '4', '5', '6', '7'],
+            current_value,
+            pg.Rect((self.screen_width + 20, 80), (100, 50)),
+            self.ui_manager
+        )
+
+        # Mostrar los elementos si están ocultos
+        if not self.hello_button.visible:
+            self.hello_button.show()
+        if not self.test_drop_down.visible:
+            self.test_drop_down.show()
+
+    def process_events(self, tablero):
+        for event in pg.event.get():
+            if event.type == QUIT:
+                self.running = False
+
+            if event.type == MOUSEBUTTONDOWN and event.button == 1:  # Clic izquierdo
+                mouse_pos = event.pos
+                cell_x = mouse_pos[0] // self.tam_celda
+                cell_y = mouse_pos[1] // self.tam_celda
+
+                if 0 <= cell_x < tablero.tam_col and 0 <= cell_y < tablero.tam_fila:
+                    self.selected_cell = (cell_y, cell_x)
+                    print(f"Celda seleccionada: ({cell_y}, {cell_x})")
+                    # Mostrar botones cuando una celda es seleccionada
+                    self.update_ui(self.selected_cell, tablero)
+            
+            self.ui_manager.process_events(event)
+
+            if event.type == pgui.UI_BUTTON_PRESSED:
+                if event.ui_element == self.hello_button:
+                    print('Hello World!')
+
+            if (event.type == pgui.UI_DROP_DOWN_MENU_CHANGED
+                and event.ui_element == self.test_drop_down):
+                
+                new_value = int(event.text)
+                print(new_value, self.selected_cell[0], self.selected_cell[1])
+                if self.selected_cell:
+                    tablero.change_value(self.selected_cell[0], self.selected_cell[1], new_value, self.screen, self.tam_celda)
+
+                self.update_ui(self.selected_cell, tablero)
+                
     def run(self, tablero):
         while self.running:
+            self.time_delta = self.clock.tick(c.FPS)
+
+            # Limpiar la pantalla antes de dibujar
+            self.screen.fill((0, 0, 0))
+            # Dibujar tablero
             tablero.draw_matriz(self.screen, self.tam_celda)
-            for event in pg.event.get():
-                if event.type == QUIT:
-                    self.running = False
+            # Check for inputs
+            self.process_events(tablero)
+            # Respond to input
+            self.ui_manager.update(self.time_delta)
+            # Dibujar la UI
+            self.ui_manager.draw_ui(self.screen)
             pg.display.update()
         pg.quit()
 
@@ -79,5 +178,6 @@ class App:
 if __name__ == '__main__':
     tablero = Tablero()
     tablero.llenar_matriz()
+    app = App(tablero.tam_col, tablero.tam_fila)
 
-    App(tablero.tam_col,tablero.tam_fila).run(tablero)
+    app.run(tablero)
