@@ -72,8 +72,11 @@ class App:
         
         self.ui_manager = pgui.UIManager((self.screen_width + c.SIDE_PANEL, self.screen_height))
         #self.recreate_ui()
-        self.hello_button = None
+        #self.hello_button = None
+        self.type_terrain= None
         self.test_drop_down = None
+        self.coordinates_cell = None
+        self.current_position = None
         
         # Inicializa los botones
         self.init_ui()
@@ -86,10 +89,17 @@ class App:
     
     def init_ui(self):
          # Inicializa los elementos de UI sin mostrarlos al principio
-        
+        """
         self.hello_button = pgui.elements.UIButton(
-            relative_rect=pg.Rect((self.screen_width + 20, 20), (100, 50)),
+            relative_rect = pg.Rect((self.screen_width + 20, 20), (100, 50)),
             text = 'Say Hello',
+            manager = self.ui_manager,
+            visible = False  # Se crea invisible al principio
+        )"""
+
+        self.type_terrain = pgui.elements.UILabel(
+            relative_rect = pg.Rect((self.screen_width + 20, 20), (100, 50)),
+            text = 'Type Terrain',
             manager = self.ui_manager,
             visible = False  # Se crea invisible al principio
         )
@@ -101,15 +111,43 @@ class App:
             self.ui_manager,
             visible = False  # Se crea invisible al principio
         )
+
+        self.current_position = pgui.elements.UILabel(
+            relative_rect = pg.Rect((self.screen_width + 20, 140), (120, 20)),
+            text = 'Current Position',
+            manager = self.ui_manager,
+            visible = False  # Se crea invisible al principio
+        )
+
+        self.coordinates_cell = pgui.elements.UILabel(
+            relative_rect = pg.Rect((self.screen_width + 20, 160), (120, 20)),
+            text = 'X: 0, Y: 0',
+            manager = self.ui_manager,
+            visible = False  # Se crea invisible al principio
+        )
+
+
     
     def update_ui(self, cell_pos, tablero):
         # Actualiza la posición de los botones y los valores
-        self.hello_button.set_position((self.screen_width + 20, 20))
+        #self.hello_button.set_position((self.screen_width + 20, 20))
+        self.type_terrain.set_position((self.screen_width + 20, 20))
+        self.current_position.set_position((self.screen_width + 20, 140))
+        self.coordinates_cell.set_position((self.screen_width + 20, 160))
         
         # Elimina el menú desplegable existente
         if self.test_drop_down is not None:
             self.test_drop_down.kill()
+        if self.coordinates_cell is not None:
+            self.coordinates_cell.kill()
 
+        #Crea un nuevo label con el valor actualizado
+        new_coordinate = "X: " + str(cell_pos[0]) + ", Y: " + str(cell_pos[1])
+        self.coordinates_cell = pgui.elements.UILabel(
+            relative_rect = pg.Rect((self.screen_width + 20, 160), (120, 20)),
+            text = new_coordinate,
+            manager = self.ui_manager
+        )
         # Crea un nuevo menú desplegable con el valor actualizado de la celda seleccionada
         current_value = str(tablero.current_value(cell_pos[0], cell_pos[1]))
         self.test_drop_down = pgui.elements.UIDropDownMenu(
@@ -120,10 +158,13 @@ class App:
         )
 
         # Mostrar los elementos si están ocultos
-        if not self.hello_button.visible:
-            self.hello_button.show()
+        #if not self.hello_button.visible:
+            #self.hello_button.show()
         if not self.test_drop_down.visible:
             self.test_drop_down.show()
+        self.type_terrain.show()
+        self.coordinates_cell.show()
+        self.current_position.show()
 
     def process_events(self, tablero):
         for event in pg.event.get():
@@ -143,13 +184,11 @@ class App:
             
             self.ui_manager.process_events(event)
 
-            if event.type == pgui.UI_BUTTON_PRESSED:
-                if event.ui_element == self.hello_button:
-                    print('Hello World!')
+            #if event.type == pgui.UI_BUTTON_PRESSED:
+                #if event.ui_element == self.hello_button:
+                    #print('Hello World!')
 
-            if (event.type == pgui.UI_DROP_DOWN_MENU_CHANGED
-                and event.ui_element == self.test_drop_down):
-                
+            if (event.type == pgui.UI_DROP_DOWN_MENU_CHANGED and event.ui_element == self.test_drop_down):
                 new_value = int(event.text)
                 print(new_value, self.selected_cell[0], self.selected_cell[1])
                 if self.selected_cell:
