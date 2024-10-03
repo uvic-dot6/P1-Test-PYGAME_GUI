@@ -1,5 +1,7 @@
 SIDE_PANEL = 300
 TILE_SIZE = 32
+SCREEN_WIDTH = 700
+SCREEN_HEIGHT = 700
 FPS = 30
 """def recreate_ui(self, cell_pos):
         
