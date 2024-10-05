@@ -3,6 +3,10 @@ TILE_SIZE = 32
 SCREEN_WIDTH = 700
 SCREEN_HEIGHT = 700
 FPS = 30
+WHITE = (255, 255, 255)
+BLUE = (42, 106, 233)
+BROWN = (191, 103, 63)
+BROWN_BORDER = (172, 137, 120)
 """def recreate_ui(self, cell_pos):
         
         if self.hello_button is None and self.test_drop_down is None:
