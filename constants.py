@@ -1,36 +1,66 @@
+##################################################### C O N S T A N T S
+
 SIDE_PANEL = 300
 TILE_SIZE = 32
 SCREEN_WIDTH = 700
 SCREEN_HEIGHT = 700
 FPS = 30
+
+##################################################### C O N S T A N T S     C O L O R S
+
+BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 BLUE = (42, 106, 233)
 BROWN = (191, 103, 63)
-BROWN_BORDER = (172, 137, 120)
-"""def recreate_ui(self, cell_pos):
-        
-        if self.hello_button is None and self.test_drop_down is None:
-            
-            self.hello_button = pgui.elements.UIButton(
-                relative_rect=pg.Rect((self.screen_width + 20, 20), (100, 50)),
-                text='Say Hello',
-                manager=self.ui_manager)
 
-            self.test_drop_down = pgui.elements.UIDropDownMenu(
-                ['1', '2', '3', '4', '5', '6', '7'],
-                str(tablero.current_value(cell_pos[0], cell_pos[1])),
-                pg.Rect((self.screen_width + 20, 80), (100, 50)),
-                self.ui_manager)
+##################################################### C O N S T A N T S     C O L O R S     B I O M E S
 
-        else:
+BOSQUE = (39, 237, 90)
+AGUA = (38, 54, 255)
+TIERRA = (218, 123, 40)
+MONTANA = (73, 57, 48)
+ARENA = (255, 222, 99)
+PANTANO = (15, 128, 88)
+NIEVE = (220, 220, 220)
+BORDER_GRID = (81, 81, 81)
 
-            self.hello_button = pgui.elements.UIButton(
-                relative_rect=pg.Rect((self.screen_width + 50, 20), (100, 50)),
-                text='Say Hello',
-                manager=self.ui_manager)
-            
-            self.test_drop_down = pgui.elements.UIDropDownMenu(
-                ['1', '2', '3', '4', '5', '6', '7'],
-                str(tablero.current_value(cell_pos[0], cell_pos[1])),
-                pg.Rect((self.screen_width + 50, 80), (100, 50)),
-                self.ui_manager)"""
+##################################################### S T R U C T S
+    
+    # Diccionario de colores
+COLORES = {
+        1: BOSQUE,    # Verde - Bosque
+        2: AGUA,    # Azul - Agua
+        3: TIERRA,    # Cafe - Tierra
+        4: MONTANA,  # Marron Oscuro - Montana
+        5: ARENA,  # Amarillo - Arena
+        6: PANTANO,   # Verde Agua - Pantano
+        7: NIEVE, # Blanco - Nieve
+        8: BLACK, #Negro - Wall
+        9: WHITE #Blanco - Road
+    }
+    
+    #Diccionario de terreno equivalente a su valor entero
+TERRAIN_INT = {
+    "Bosque": 1,
+    "Agua": 2,
+    "Tierra": 3,
+    "Montaña": 4,
+    "Arena": 5,
+    "Pantano": 6,
+    "Nieve": 7,
+    "Wall": 8,
+    "Road": 9
+}
+
+    #Diccionario de un valor entero equivalente a su tipo de terreno
+INT_TERRAIN = {
+        1: "Bosque",    # Verde - Bosque
+        2: "Agua",    # Azul - Agua
+        3: "Tierra",    # Cafe - Tierra
+        4: "Montaña",  # Marron Oscuro - Montana
+        5: "Arena",  # Amarillo - Arena
+        6: "Pantano",   # Verde Agua - Pantano
+        7: "Nieve", # Blanco - Nieve
+        8: "Wall", #Negro - Wall
+        9: "Road" #Blanco - Road
+        }
