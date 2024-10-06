@@ -72,3 +72,6 @@ class Terrain:
     def current_value(self, x, y):
         value_matriz = self.matriz[x][y]
         return c.INT_TERRAIN.get(value_matriz)
+    
+    def convert_coordinate_to_letter(self, x):
+        return chr(x + 65)

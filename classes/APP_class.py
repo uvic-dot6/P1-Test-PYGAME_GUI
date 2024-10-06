@@ -9,6 +9,7 @@ from .TERRAIN_class import Terrain
 
 class App:
     selected_cell = None
+    archivo = None
     
     def __init__(self):
         #Inicio del programa
@@ -52,6 +53,8 @@ class App:
             container = self.side_panel_bottom,
             visible = True  # Se crea invisible al principio
         )
+
+        
         self.terrain = None
 
         #self.recreate_ui()
@@ -62,6 +65,9 @@ class App:
         self.test_drop_down = None
         self.coordinates_cell = None
         self.current_position = None
+        self.save_map = None
+        self.clear_map = None
+        self.save_copy_map = None
         
         """ Metododo para inicializar los botones """
         self.init_ui()
@@ -81,6 +87,30 @@ class App:
         self.load_map = pgui.elements.UIButton(
             relative_rect = pg.Rect((15, 15), (100, 50)),
             text = 'Load Map',
+            manager = self.ui_manager,
+            container = self.side_panel_bottom,
+            visible = True  # Se crea invisible al principio
+        )
+            #CLEAR MAP
+        self.clear_map = pgui.elements.UIButton(
+            relative_rect = pg.Rect((130, 15), (100, 50)),
+            text = 'Clear Map',
+            manager = self.ui_manager,
+            container = self.side_panel_bottom,
+            visible = True  # Se crea invisible al principio
+        )
+            #SAVE MAP BUTTON
+        self.save_map = pgui.elements.UIButton(
+            relative_rect = pg.Rect((15, 80), (100, 50)),
+            text = 'Save',
+            manager = self.ui_manager,
+            container = self.side_panel_bottom,
+            visible = True  # Se crea invisible al principio
+        )
+            #SAVE AS A COPY MAP BUTTON
+        self.save_copy_map = pgui.elements.UIButton(
+            relative_rect = pg.Rect((130, 80), (100, 50)),
+            text = 'Save As...',
             manager = self.ui_manager,
             container = self.side_panel_bottom,
             visible = True  # Se crea invisible al principio
@@ -145,6 +175,29 @@ class App:
         else:
             print("No se seleccionó ningún archivo")
             return None
+    #def save_changes_map(self, archivo):
+
+      #  if archivo:
+            
+       # else:
+
+    def save_as_changes_map(self):
+        #root = tk.Tk()
+        archivo = filedialog.asksaveasfilename(
+        defaultextension = ".txt",
+        filetypes = (("Archivos de texto", "*.txt"), ("Todos los archivos", "*.*"))
+        )
+        if archivo:
+            with open(archivo, 'w') as file:
+                for x in range(self.terrain.tam_fila):
+                    for y in range(self.terrain.tam_col):
+                        contenido = str(self.terrain.matriz[x][y])
+                        file.write(contenido)
+                    if x != (self.terrain.tam_fila - 1):
+                        file.write('\n')
+                    
+                
+
 
     def update_ui(self, cell_pos, terrain):
         # Actualiza la posición de los botones y los valores
@@ -160,7 +213,9 @@ class App:
             self.coordinates_cell.kill()  
 
         #Crea un nuevo label con el valor actualizado
-        new_coordinate = "X: " + str(cell_pos[0]) + ", Y: " + str(cell_pos[1])
+        new_coordinate = "X: " + str(cell_pos[0] + 1) + ", Y: " + terrain.convert_coordinate_to_letter(cell_pos[1])
+        #str(cell_pos[0])
+
         self.coordinates_cell = pgui.elements.UILabel(
             relative_rect = pg.Rect((15, 35), (100, 20)),
             text = new_coordinate,
@@ -210,9 +265,12 @@ class App:
                 if event.ui_element == self.load_map:
                     print('Haz presionado Load Map')
                     #Se carga el archivo txt
-                    archivo = self.abrir_explorador_archivos()
+                    self.archivo = self.abrir_explorador_archivos()
                     #Se crea un objeto del tipo Terrain
-                    self.terrain = Terrain(archivo)
+                    self.terrain = Terrain(self.archivo)
+                if event.ui_element == self.save_copy_map:
+                    self.save_as_changes_map()
+                    print("Haz presionado salvar como...")
 
             #Si existe un objeto Terrain se ejecuta este bloque de codigo
             if self.terrain:
