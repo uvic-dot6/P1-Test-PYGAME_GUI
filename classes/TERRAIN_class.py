@@ -75,3 +75,7 @@ class Terrain:
     
     def convert_coordinate_to_letter(self, x):
         return chr(x + 65)
+    def convert_letter_to_coordinate(self, text):
+        a = ord(text) - 65
+        print(a)
+        return a

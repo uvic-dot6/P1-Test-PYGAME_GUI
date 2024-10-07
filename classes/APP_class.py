@@ -63,11 +63,14 @@ class App:
         #self.hello_button = None
         self.type_terrain = None
         self.test_drop_down = None
-        self.coordinates_cell = None
+        self.coordinates_cell_y = None
+        self.coordinates_cell_x = None
         self.current_position = None
         self.save_map = None
         self.clear_map = None
         self.save_copy_map = None
+        self.text_entry_line_1 = None
+        self.text_entry_line_2 = None
         
         """ Metododo para inicializar los botones """
         self.init_ui()
@@ -142,9 +145,16 @@ class App:
             visible = False  # Se crea invisible al principio
         )
             #COORDINATES LABEL
-        self.coordinates_cell = pgui.elements.UILabel(
-            relative_rect = pg.Rect((15, 35), (100, 20)),
-            text = 'X: 0, Y: 0',
+        self.coordinates_cell_y = pgui.elements.UILabel(
+            relative_rect = pg.Rect((15, 35), (30, 20)),
+            text = 'Y :',
+            manager = self.ui_manager,
+            container = self.side_panel_top,
+            visible = False  # Se crea invisible al principio
+        )
+        self.coordinates_cell_x = pgui.elements.UILabel(
+            relative_rect = pg.Rect((15, 35), (30, 20)),
+            text = 'X :',
             manager = self.ui_manager,
             container = self.side_panel_top,
             visible = False  # Se crea invisible al principio
@@ -157,6 +167,26 @@ class App:
             container = self.side_panel_top,
             visible = False  # Se crea invisible al principio
         )
+            # TEXT ENTRY 1
+        self.text_entry_line_1 = pgui.elements.UITextEntryLine(
+            pg.Rect((120, 35), (40, 30)),
+            self.ui_manager,
+            container = self.side_panel_top,
+            visible = False,
+            initial_text = 'A - Z'
+        )
+        self.text_entry_line_1.set_allowed_characters('letters')
+        self.text_entry_line_1.set_text_length_limit(1)
+            # TEXT ENTRY 2
+        self.text_entry_line_2 = pgui.elements.UITextEntryLine(
+            relative_rect = pg.Rect((55, 35), (40, 30)),
+            manager = self.ui_manager,
+            container = self.side_panel_top,
+            visible = False,
+            initial_text = '0'
+        )
+        self.text_entry_line_2.set_allowed_characters('numbers')
+        #self.text_entry_line_2.set_text_length_limit()
 
     def abrir_explorador_archivos(self):
         # Crear una instancia de Tkinter y ocultar la ventana
@@ -175,11 +205,6 @@ class App:
         else:
             print("No se seleccionó ningún archivo")
             return None
-    #def save_changes_map(self, archivo):
-
-      #  if archivo:
-            
-       # else:
 
     def save_as_changes_map(self):
         #root = tk.Tk()
@@ -196,34 +221,57 @@ class App:
                     if x != (self.terrain.tam_fila - 1):
                         file.write('\n')
                     
-                
+    def change_coordinate_Y(self, text):
+        new_cell_pos = [self.selected_cell[0], self.terrain.convert_letter_to_coordinate(text)]
+        self.selected_cell = new_cell_pos
+        #print(new_cell_pos[0],new_cell_pos[1])
+        self.update_ui(new_cell_pos, self.terrain)
 
-
+    def change_coordinate_X(self, text):
+        new_cell_pos = [int(text) - 1, self.selected_cell[1]]
+        self.selected_cell = new_cell_pos
+        #print(new_cell_pos[0],new_cell_pos[1])
+        self.update_ui(new_cell_pos, self.terrain)
+    
     def update_ui(self, cell_pos, terrain):
         # Actualiza la posición de los botones y los valores
             #Posicion relativa a su contenedor
         self.type_terrain.set_relative_position((15, 60))
         self.current_position.set_relative_position((15, 15))
-        self.coordinates_cell.set_relative_position((15, 35))
+        #self.coordinates_cell.set_relative_position((15, 35))
         
         # Elimina el menú desplegable existente
         if self.test_drop_down is not None:
             self.test_drop_down.kill()
-        if self.coordinates_cell is not None:
-            self.coordinates_cell.kill()  
+
+        if self.coordinates_cell_y is not None:
+            self.coordinates_cell_y.kill()  
+        if self.coordinates_cell_x is not None:
+            self.coordinates_cell_x.kill()  
 
         #Crea un nuevo label con el valor actualizado
-        new_coordinate = "X: " + str(cell_pos[0] + 1) + ", Y: " + terrain.convert_coordinate_to_letter(cell_pos[1])
+        
+        #new_coordinate = "X: " + str(cell_pos[0] + 1) + ", Y: " + terrain.convert_coordinate_to_letter(cell_pos[1])
         #str(cell_pos[0])
 
-        self.coordinates_cell = pgui.elements.UILabel(
-            relative_rect = pg.Rect((15, 35), (100, 20)),
-            text = new_coordinate,
+        self.coordinates_cell_y = pgui.elements.UILabel(
+            relative_rect = pg.Rect((95, 40), (30, 20)),
+            text = "Y :",
             container = self.side_panel_top,
             manager = self.ui_manager
         )
+        self.coordinates_cell_x = pgui.elements.UILabel(
+            relative_rect = pg.Rect((30, 40), (30, 20)),
+            text = "X :",
+            container = self.side_panel_top,
+            manager = self.ui_manager
+        )
+
+        self.text_entry_line_1.set_text(terrain.convert_coordinate_to_letter(cell_pos[1]))
+        self.text_entry_line_2.set_text(str(cell_pos[0] + 1))
         # Crea un nuevo menú desplegable con el valor actualizado de la celda seleccionada
             #Las opciones que sea van a mostrar son del terreno si el valor de la matriz es menor a 7
+        print(cell_pos[0], cell_pos[1])
         if terrain.matriz[cell_pos[0]][cell_pos[1]] <= 7: 
             current_value = terrain.current_value(cell_pos[0], cell_pos[1])
             self.test_drop_down = pgui.elements.UIDropDownMenu(
@@ -248,8 +296,10 @@ class App:
         if not self.test_drop_down.visible:
             self.test_drop_down.show()
         self.type_terrain.show()
-        self.coordinates_cell.show()
+        #self.coordinates_cell.show()
         self.current_position.show()
+        self.text_entry_line_1.show()
+        self.text_entry_line_2.show()
 
     #PROCESADOR DE EVENTOS
     def process_events(self):
@@ -302,6 +352,17 @@ class App:
                         self.terrain.change_value(self.selected_cell[0], self.selected_cell[1], new_value, self.screen)
                     #Se actualiza a la nueva opcion mostrada en el DROP DOWN MENU
                     self.update_ui(self.selected_cell, self.terrain)
+
+                #TEXT ENTRY
+                #if (event.type == pgui.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == '#main_text_entry_1'):
+                    #print(event.text)
+                if event.type == pg.USEREVENT and event.user_type == pgui.UI_TEXT_ENTRY_FINISHED:
+                    if event.ui_element == self.text_entry_line_1:
+                        self.change_coordinate_Y(self.text_entry_line_1.get_text().upper())
+                        self.text_entry_line_1.redraw()
+                    if event.ui_element == self.text_entry_line_2:
+                        self.change_coordinate_X(self.text_entry_line_2.get_text())
+                        self.text_entry_line_2.redraw()
 
                 
     def run(self):
