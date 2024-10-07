@@ -6,10 +6,12 @@ import pygame as pg
 from pygame.locals import *
 import pygame_gui as pgui
 from .TERRAIN_class import Terrain
+from .MASK_class import Mask_Map
 
 class App:
     selected_cell = None
     archivo = None
+    obj_mask = True
     
     def __init__(self):
         #Inicio del programa
@@ -56,6 +58,7 @@ class App:
 
         
         self.terrain = None
+        self.mascara = None
 
         #self.recreate_ui()
 
@@ -333,6 +336,7 @@ class App:
                     cell_y = (mouse_pos[1] - c.TILE_SIZE) // c.TILE_SIZE
                     #Se verifica si la posicion corresponde a alguna celda del mapa
                     if mouse_pos[0] >= 32 and mouse_pos[1] >= 32 and 0 <= cell_x < self.terrain.tam_col and 0 <= cell_y < self.terrain.tam_fila:
+                        self.mascara.unmask(cell_x, cell_y, self.mascara, self.screen, self.terrain)
                         self.selected_cell = (cell_y, cell_x)
                         print(f"Celda seleccionada: ({cell_y}, {cell_x})")
                         # Mostrar botones cuando una celda es seleccionada
@@ -371,12 +375,19 @@ class App:
             self.time_delta = self.clock.tick(c.FPS)
 
             # Limpiar la pantalla antes de dibujar
-            self.screen.fill((0, 0, 0))
+            self.screen.fill(c.BLACK)
 
             # Dibujar Terrain
             if self.terrain:
-                self.terrain.draw_grid(self.screen)
-                self.terrain.draw_matriz(self.screen)
+                    #self.terrain.draw_grid(self.screen)
+                    #self.terrain.draw_matriz(self.screen)
+                #Crear Mascara
+                if self.obj_mask == True:
+                    self.mascara = Mask_Map(self.terrain, self.screen)
+                    self.obj_mask = False
+                    print("Se ejecuto 1 vez")
+                    self.screen.blit(self.mascara.masked_surface, (0, 0))
+                self.screen.blit(self.mascara.masked_surface, (0, 0))
             
             # Check for inputs
                 # Respond to input
