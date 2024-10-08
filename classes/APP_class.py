@@ -379,8 +379,8 @@ class App:
 
             # Dibujar Terrain
             if self.terrain:
-                    #self.terrain.draw_grid(self.screen)
-                    #self.terrain.draw_matriz(self.screen)
+                self.terrain.draw_grid(self.screen, self.)
+                self.terrain.draw_matriz(self.screen)
                 #Crear Mascara
                 if self.obj_mask == True:
                     self.mascara = Mask_Map(self.terrain, self.screen)
