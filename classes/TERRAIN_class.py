@@ -3,6 +3,8 @@ import pygame as pg
 from pygame.locals import *
 
 class Terrain:
+    text_list = []
+    num_list = []
     matriz = []
     tam_fila = 0
     tam_col = 0
@@ -25,12 +27,13 @@ class Terrain:
             print(x)
     
     #Dibujar el terreno
-    def draw_matriz(self, screen):
+    def draw_matriz(self, screen, offset_x, offset_y):
         for y in range(self.tam_fila):
             for x in range(self.tam_col):
                 color = c.COLORES.get(self.matriz[y][x], c.BLACK) # Color correspondiente al valor actual de la matriz
-                pg.draw.rect(screen, color, pg.Rect((x+1) * c.TILE_SIZE, (y+1) * c.TILE_SIZE, c.TILE_SIZE, c.TILE_SIZE)) # Dibujar celda
-                pg.draw.rect(screen, c.BORDER_GRID, pg.Rect((x+1) * c.TILE_SIZE, (y+1) * c.TILE_SIZE, c.TILE_SIZE, c.TILE_SIZE), 1) # Dibujar borde de la celda (grid)
+
+                pg.draw.rect(screen, color, pg.Rect((x+1) * c.TILE_SIZE + offset_x, (y+1) * c.TILE_SIZE + offset_y, c.TILE_SIZE, c.TILE_SIZE)) # Dibujar celda
+                pg.draw.rect(screen, c.BORDER_GRID, pg.Rect((x+1) * c.TILE_SIZE + offset_x, (y+1) * c.TILE_SIZE + offset_y, c.TILE_SIZE, c.TILE_SIZE), 1) # Dibujar borde de la celda (grid)
     
     #Dibujar sistema de coordenadas
     def draw_grid(self, screen):
