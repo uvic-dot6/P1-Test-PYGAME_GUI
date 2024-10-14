@@ -12,6 +12,8 @@ class App:
     selected_cell = None
     archivo = None
     obj_mask = True
+    offset_x = 0  # Desplazamiento en el eje X
+    offset_y = 0  # Desplazamiento en el eje Y
     
     def __init__(self):
         #Inicio del programa
@@ -26,6 +28,8 @@ class App:
         #Display y UIManager
         self.screen = pg.display.set_mode((c.SCREEN_WIDTH + c.SIDE_PANEL, c.SCREEN_HEIGHT))
         self.ui_manager = pgui.UIManager((c.SCREEN_WIDTH + c.SIDE_PANEL, c.SCREEN_HEIGHT))
+
+        #size_map = pg.Rect(0, 0, c.SCREEN_WIDTH, c.SCREEN_HEIGHT)
 
         """ Definicion de los SIDE PANLES usados para la interfaz """
             #1
@@ -312,6 +316,16 @@ class App:
 
             self.ui_manager.process_events(event)
 
+            if event.type == KEYDOWN:
+                if event.key == K_LEFT:
+                    self.offset_x += c.TILE_SIZE
+                elif event.key == K_RIGHT:
+                    self.offset_x -= c.TILE_SIZE
+                elif event.key == K_UP:
+                    self.offset_y += c.TILE_SIZE
+                elif event.key == K_DOWN:
+                    self.offset_y -= c.TILE_SIZE
+
             #IF BUTTON PRESSED
             if event.type == pgui.UI_BUTTON_PRESSED:
                 #Boton de load map presionado
@@ -332,11 +346,12 @@ class App:
                     #Se guarda en una tupla los valores
                     mouse_pos = event.pos
                     #Se covierte a un numero entero para conocer la celda sobre la que se hizo click
-                    cell_x = (mouse_pos[0] - c.TILE_SIZE) // c.TILE_SIZE
-                    cell_y = (mouse_pos[1] - c.TILE_SIZE) // c.TILE_SIZE
+                    cell_x = (mouse_pos[0] - c.TILE_SIZE - self.offset_x) // c.TILE_SIZE
+                    cell_y = (mouse_pos[1] - c.TILE_SIZE - self.offset_y) // c.TILE_SIZE
                     #Se verifica si la posicion corresponde a alguna celda del mapa
-                    if mouse_pos[0] >= 32 and mouse_pos[1] >= 32 and 0 <= cell_x < self.terrain.tam_col and 0 <= cell_y < self.terrain.tam_fila:
-                        self.mascara.unmask(cell_x, cell_y, self.mascara, self.screen, self.terrain)
+                    #if mouse_pos[0] >= 32 and mouse_pos[1] >= 32 and 0 <= cell_x < self.terrain.tam_col and 0 <= cell_y < self.terrain.tam_fila:
+                    if 0 <= cell_x < self.terrain.tam_col and 0 <= cell_y < self.terrain.tam_fila:
+                        #self.mascara.unmask(cell_x, cell_y, self.mascara, self.screen, self.terrain)
                         self.selected_cell = (cell_y, cell_x)
                         print(f"Celda seleccionada: ({cell_y}, {cell_x})")
                         # Mostrar botones cuando una celda es seleccionada
@@ -379,15 +394,16 @@ class App:
 
             # Dibujar Terrain
             if self.terrain:
-                    #self.terrain.draw_grid(self.screen)
-                    #self.terrain.draw_matriz(self.screen)
+                #self.terrain.draw_grid(self.screen, self.offset_x, self.offset_y)
+                self.terrain.draw_matriz(self.screen, self.offset_x, self.offset_y)
+                self.terrain.draw_grid(self.screen, self.offset_x, self.offset_y)
                 #Crear Mascara
-                if self.obj_mask == True:
-                    self.mascara = Mask_Map(self.terrain, self.screen)
-                    self.obj_mask = False
-                    print("Se ejecuto 1 vez")
-                    self.screen.blit(self.mascara.masked_surface, (0, 0))
-                self.screen.blit(self.mascara.masked_surface, (0, 0))
+                #if self.obj_mask == True:
+                    #self.mascara = Mask_Map(self.terrain, self.screen)
+                    #lf.obj_mask = False
+                    #print("Se ejecuto 1 vez")
+                    #self.screen.blit(self.mascara.masked_surface, (0, 0))
+                #self.screen.blit(self.mascara.masked_surface, (0, 0))
             
             # Check for inputs
                 # Respond to input
