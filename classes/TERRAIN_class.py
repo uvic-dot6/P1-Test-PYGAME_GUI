@@ -3,6 +3,12 @@ import pygame as pg
 from pygame.locals import *
 
 class Terrain:
+    visited = []
+    decision = []
+    initial_point = None #(X,Y)
+    end_point = None #(X,Y)
+    actual_position = []
+    
     text_list = []
     num_list = []
     matriz = []
