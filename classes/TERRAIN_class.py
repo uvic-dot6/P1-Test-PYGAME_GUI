@@ -36,29 +36,54 @@ class Terrain:
                 pg.draw.rect(screen, c.BORDER_GRID, pg.Rect((x+1) * c.TILE_SIZE + offset_x, (y+1) * c.TILE_SIZE + offset_y, c.TILE_SIZE, c.TILE_SIZE), 1) # Dibujar borde de la celda (grid)
     
     #Dibujar sistema de coordenadas
-    def draw_grid(self, screen):
-        # Dibuja los recuadros de las letras
+    def draw_grid(self, screen, offset_x, offset_y):
+        # Dibujar los recuadros de las etiquetas (columnas)
         for x in range(self.tam_col + 1):
-            pg.draw.rect(screen, c.BLUE, pg.Rect(x * c.TILE_SIZE, 0, c.TILE_SIZE, c.TILE_SIZE))
-            pg.draw.rect(screen, c.BLUE_BORDER, pg.Rect(x * c.TILE_SIZE, 0, c.TILE_SIZE, c.TILE_SIZE), 1)
-        # Dibuja los recuadros de las numeros
+            label_x = x - (offset_x // c.TILE_SIZE)
+            if label_x >= 0 and label_x <= self.tam_col: 
+                pg.draw.rect(screen, c.BLUE, pg.Rect(x * c.TILE_SIZE + offset_x % c.TILE_SIZE, 0, c.TILE_SIZE, c.TILE_SIZE))
+                pg.draw.rect(screen, c.BLUE_BORDER, pg.Rect(x * c.TILE_SIZE + offset_x % c.TILE_SIZE, 0, c.TILE_SIZE, c.TILE_SIZE), 1)
+
+        # Dibujar los recuadros de las etiquetas (filas)
         for y in range(1, self.tam_fila + 1):
-            pg.draw.rect(screen, c.BLUE, pg.Rect(0, y * c.TILE_SIZE, c.TILE_SIZE, c.TILE_SIZE))
-            pg.draw.rect(screen, c.BLUE_BORDER, pg.Rect(0, y * c.TILE_SIZE, c.TILE_SIZE, c.TILE_SIZE), 1)
+            label_y = y - (offset_y // c.TILE_SIZE)
+            if label_y > 0 and label_y <= self.tam_fila:
+                pg.draw.rect(screen, c.BLUE, pg.Rect(0, y * c.TILE_SIZE + offset_y % c.TILE_SIZE, c.TILE_SIZE, c.TILE_SIZE))
+                pg.draw.rect(screen, c.BLUE_BORDER, pg.Rect(0, y * c.TILE_SIZE + offset_y % c.TILE_SIZE, c.TILE_SIZE, c.TILE_SIZE), 1)
+        # Dibuja los recuadros de las letras
+        #for x in range(self.tam_col + 1):
+            #pg.draw.rect(screen, c.BLUE, pg.Rect(x * c.TILE_SIZE, 0, c.TILE_SIZE, c.TILE_SIZE))
+            #pg.draw.rect(screen, c.BLUE_BORDER, pg.Rect(x * c.TILE_SIZE, 0, c.TILE_SIZE, c.TILE_SIZE), 1)
+        # Dibuja los recuadros de las numeros
+        #for y in range(1, self.tam_fila + 1):
+            #pg.draw.rect(screen, c.BLUE, pg.Rect(0, y * c.TILE_SIZE, c.TILE_SIZE, c.TILE_SIZE))
+            #pg.draw.rect(screen, c.BLUE_BORDER, pg.Rect(0, y * c.TILE_SIZE, c.TILE_SIZE, c.TILE_SIZE), 1)
         
         #Etiquetar las filas A - Z
         for x in range(1, self.tam_col + 1):
-            label = chr(64 + x)  # A es 65 en ASCII
-            font = pg.font.Font(None, 24)
-            text_surface = font.render(label, True, c.WHITE)
-            screen.blit(text_surface, (4 + x * c.TILE_SIZE, 4))
+            label_x = x - (offset_x // c.TILE_SIZE)
+            if label_x > 0 and label_x <= self.tam_col:  # Mostrar solo las etiquetas visibles
+                label = chr(64 + label_x)  # A es 65 en ASCII
+                font = pg.font.Font(None, 24)
+                text_surface = font.render(label, True, c.WHITE)
+                screen.blit(text_surface, (4 + x * c.TILE_SIZE + offset_x % c.TILE_SIZE, 4))
+            #label = chr(64 + x)  # A es 65 en ASCII
+            #font = pg.font.Font(None, 24)
+            #text_surface = font.render(label, True, c.WHITE)
+            #screen.blit(text_surface, (4 + x * c.TILE_SIZE, 4))
         
         # Etiquetar las columnas con numeros
         for y in range(1, self.tam_fila + 1):
-            label = str(y)
-            font = pg.font.Font(None, 24)
-            text_surface = font.render(label, True, c.WHITE)
-            screen.blit(text_surface, (4, y * c.TILE_SIZE + 4))
+            label_y = y - (offset_y // c.TILE_SIZE)
+            if label_y > 0 and label_y <= self.tam_fila:  # Mostrar solo las etiquetas visibles
+                label = str(label_y)
+                font = pg.font.Font(None, 24)
+                text_surface = font.render(label, True, c.WHITE)
+                screen.blit(text_surface, (4, y * c.TILE_SIZE + 4 + offset_y % c.TILE_SIZE))
+            #label = str(y)
+            #font = pg.font.Font(None, 24)
+            #text_surface = font.render(label, True, c.WHITE)
+            #screen.blit(text_surface, (4, y * c.TILE_SIZE + 4))
     
     #Cambiar un valor de la matriz
     def change_value(self, x, y, new_value, screen):
