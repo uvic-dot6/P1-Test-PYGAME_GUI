@@ -3,10 +3,10 @@ import pygame as pg
 from pygame.locals import *
 
 class Terrain:
-    visited = []
-    decision = []
-    initial_point = None #(X,Y)
-    end_point = None #(X,Y)
+    visited = [(1,1),(1,2),(1,3),(2,3)]
+    decision = [(1,1),(1,2),(1,3),(2,3)]
+    initial_point = (1, 1) #(X,Y)
+    end_point = (2, 3) #(X,Y)
     actual_position = []
     
     text_list = []
@@ -40,6 +40,10 @@ class Terrain:
 
                 pg.draw.rect(screen, color, pg.Rect((x+1) * c.TILE_SIZE + offset_x, (y+1) * c.TILE_SIZE + offset_y, c.TILE_SIZE, c.TILE_SIZE)) # Dibujar celda
                 pg.draw.rect(screen, c.BORDER_GRID, pg.Rect((x+1) * c.TILE_SIZE + offset_x, (y+1) * c.TILE_SIZE + offset_y, c.TILE_SIZE, c.TILE_SIZE), 1) # Dibujar borde de la celda (grid)
+                self.draw_i(screen, offset_x, offset_y)
+                self.draw_f(screen, offset_x, offset_y)
+                self.draw_v(screen, offset_x, offset_y)
+                self.draw_o(screen, offset_x, offset_y)
     
     #Dibujar sistema de coordenadas
     def draw_grid(self, screen, offset_x, offset_y):
@@ -56,14 +60,6 @@ class Terrain:
             if label_y > 0 and label_y <= self.tam_fila:
                 pg.draw.rect(screen, c.BLUE, pg.Rect(0, y * c.TILE_SIZE + offset_y % c.TILE_SIZE, c.TILE_SIZE, c.TILE_SIZE))
                 pg.draw.rect(screen, c.BLUE_BORDER, pg.Rect(0, y * c.TILE_SIZE + offset_y % c.TILE_SIZE, c.TILE_SIZE, c.TILE_SIZE), 1)
-        # Dibuja los recuadros de las letras
-        #for x in range(self.tam_col + 1):
-            #pg.draw.rect(screen, c.BLUE, pg.Rect(x * c.TILE_SIZE, 0, c.TILE_SIZE, c.TILE_SIZE))
-            #pg.draw.rect(screen, c.BLUE_BORDER, pg.Rect(x * c.TILE_SIZE, 0, c.TILE_SIZE, c.TILE_SIZE), 1)
-        # Dibuja los recuadros de las numeros
-        #for y in range(1, self.tam_fila + 1):
-            #pg.draw.rect(screen, c.BLUE, pg.Rect(0, y * c.TILE_SIZE, c.TILE_SIZE, c.TILE_SIZE))
-            #pg.draw.rect(screen, c.BLUE_BORDER, pg.Rect(0, y * c.TILE_SIZE, c.TILE_SIZE, c.TILE_SIZE), 1)
         
         #Etiquetar las filas A - Z
         for x in range(1, self.tam_col + 1):
@@ -73,10 +69,6 @@ class Terrain:
                 font = pg.font.Font(None, 24)
                 text_surface = font.render(label, True, c.WHITE)
                 screen.blit(text_surface, (4 + x * c.TILE_SIZE + offset_x % c.TILE_SIZE, 4))
-            #label = chr(64 + x)  # A es 65 en ASCII
-            #font = pg.font.Font(None, 24)
-            #text_surface = font.render(label, True, c.WHITE)
-            #screen.blit(text_surface, (4 + x * c.TILE_SIZE, 4))
         
         # Etiquetar las columnas con numeros
         for y in range(1, self.tam_fila + 1):
@@ -86,10 +78,6 @@ class Terrain:
                 font = pg.font.Font(None, 24)
                 text_surface = font.render(label, True, c.WHITE)
                 screen.blit(text_surface, (4, y * c.TILE_SIZE + 4 + offset_y % c.TILE_SIZE))
-            #label = str(y)
-            #font = pg.font.Font(None, 24)
-            #text_surface = font.render(label, True, c.WHITE)
-            #screen.blit(text_surface, (4, y * c.TILE_SIZE + 4))
     
     #Cambiar un valor de la matriz
     def change_value(self, x, y, new_value, screen):
@@ -113,3 +101,34 @@ class Terrain:
         a = ord(text) - 65
         print(a)
         return a
+    
+    def asignar_celda_inicial(self, x, y):
+        self.initial_point = (x, y)
+    def asignar_celda_final(self, x, y):
+        self.end_point = (x, y)
+    
+    def draw_i(self, screen, offset_x, offset_y):
+        label = chr(73)  # I es 73 en ASCII
+        font = pg.font.Font(None, 18)
+        text_surface = font.render(label, True, c.WHITE, c.BLACK)
+        screen.blit(text_surface, (2 + self.initial_point[1] * c.TILE_SIZE + offset_x, self.initial_point[0] * c.TILE_SIZE + offset_y + 16))
+
+    def draw_f(self, screen, offset_x, offset_y):
+        label = chr(70)  # F es 73 en ASCII
+        font = pg.font.Font(None, 18)
+        text_surface = font.render(label, True, c.WHITE, c.BLACK)
+        screen.blit(text_surface, (16 + self.end_point[1] * c.TILE_SIZE + offset_x, self.end_point[0] * c.TILE_SIZE + offset_y + 16))
+
+    def draw_v(self, screen, offset_x, offset_y):
+        label = chr(86) # V es 86 en ASCII
+        font = pg.font.Font(None, 18)
+        text_surface = font.render(label, True, c.WHITE, c.BLACK)
+        for v in self.visited:
+            screen.blit(text_surface, (2 + v[1] * c.TILE_SIZE + offset_x, v[0] * c.TILE_SIZE + offset_y + 1))
+
+    def draw_o(self, screen, offset_x, offset_y):
+        label = chr(79) # O es 79 en ASCII
+        font = pg.font.Font(None, 18)
+        text_surface = font.render(label, True, c.WHITE, c.BLACK)
+        for o in self.decision:
+            screen.blit(text_surface, (16 + o[1] * c.TILE_SIZE + offset_x, o[0] * c.TILE_SIZE + offset_y + 1))

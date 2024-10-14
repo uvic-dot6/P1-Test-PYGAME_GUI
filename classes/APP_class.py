@@ -12,6 +12,7 @@ class App:
     selected_cell = None
     archivo = None
     obj_mask = True
+    datos_iniciales = True
     offset_x = 0  # Desplazamiento en el eje X
     offset_y = 0  # Desplazamiento en el eje Y
     
@@ -73,11 +74,14 @@ class App:
         self.coordinates_cell_y = None
         self.coordinates_cell_x = None
         self.current_position = None
-        self.save_map = None
-        self.clear_map = None
+        #self.save_map = None
+        #self.clear_map = None
         self.save_copy_map = None
         self.text_entry_line_1 = None
         self.text_entry_line_2 = None
+        #Entrada de la posicion inicial y final
+        self.text_entry_line_3 = None
+        self.text_entry_line_4 = None
         
         """ Metododo para inicializar los botones """
         self.init_ui()
@@ -101,25 +105,9 @@ class App:
             container = self.side_panel_bottom,
             visible = True  # Se crea invisible al principio
         )
-            #CLEAR MAP
-        self.clear_map = pgui.elements.UIButton(
-            relative_rect = pg.Rect((130, 15), (100, 50)),
-            text = 'Clear Map',
-            manager = self.ui_manager,
-            container = self.side_panel_bottom,
-            visible = True  # Se crea invisible al principio
-        )
-            #SAVE MAP BUTTON
-        self.save_map = pgui.elements.UIButton(
-            relative_rect = pg.Rect((15, 80), (100, 50)),
-            text = 'Save',
-            manager = self.ui_manager,
-            container = self.side_panel_bottom,
-            visible = True  # Se crea invisible al principio
-        )
             #SAVE AS A COPY MAP BUTTON
         self.save_copy_map = pgui.elements.UIButton(
-            relative_rect = pg.Rect((130, 80), (100, 50)),
+            relative_rect = pg.Rect((130, 15), (100, 50)),
             text = 'Save As...',
             manager = self.ui_manager,
             container = self.side_panel_bottom,
@@ -193,6 +181,26 @@ class App:
             initial_text = '0'
         )
         self.text_entry_line_2.set_allowed_characters('numbers')
+        #self.text_entry_line_2.set_text_length_limit()
+            # TEXT ENTRY 3
+        self.text_entry_line_3 = pgui.elements.UITextEntryLine(
+            pg.Rect((15, 80), (100, 30)),
+            self.ui_manager,
+            container = self.side_panel_bottom,
+            visible = False,
+            initial_text = 'A - Z'
+        )
+        self.text_entry_line_3.set_allowed_characters('letters')
+        self.text_entry_line_3.set_text_length_limit(1)
+            # TEXT ENTRY 4
+        self.text_entry_line_4 = pgui.elements.UITextEntryLine(
+            relative_rect = pg.Rect((130, 80), (100, 30)),
+            manager = self.ui_manager,
+            container = self.side_panel_bottom,
+            visible = False,
+            initial_text = '0'
+        )
+        self.text_entry_line_4.set_allowed_characters('numbers')
         #self.text_entry_line_2.set_text_length_limit()
 
     def abrir_explorador_archivos(self):
@@ -342,7 +350,18 @@ class App:
                 if event.ui_element == self.save_copy_map:
                     self.save_as_changes_map()
                     print("Haz presionado salvar como...")
-
+            #Seleccionar inicio y fin
+            """if self.terrain:
+                if event.type == MOUSEBUTTONDOWN and event.button == 1:
+                    print("Selecciona tu posicion de inicio")
+                    mouse_pos = event.pos
+                    #Se covierte a un numero entero para conocer la celda sobre la que se hizo click
+                    cell_x = (mouse_pos[0] - c.TILE_SIZE - self.offset_x) // c.TILE_SIZE
+                    cell_y = (mouse_pos[1] - c.TILE_SIZE - self.offset_y) // c.TILE_SIZE
+                    if 0 <= cell_x < self.terrain.tam_col and 0 <= cell_y < self.terrain.tam_fila:
+                        #self.mascara.unmask(cell_x, cell_y, self.mascara, self.screen, self.terrain)
+                        self.selected_cell = (cell_y, cell_x)
+                        print(f"Celda seleccionada: ({cell_y}, {cell_x})")"""
             #Si existe un objeto Terrain se ejecuta este bloque de codigo
             if self.terrain:
                 #Se detecta la posicion donde se presiona el click izquierdo del mouse
@@ -401,6 +420,7 @@ class App:
                 #self.terrain.draw_grid(self.screen, self.offset_x, self.offset_y)
                 self.terrain.draw_matriz(self.screen, self.offset_x, self.offset_y)
                 self.terrain.draw_grid(self.screen, self.offset_x, self.offset_y)
+                
                 #Crear Mascara
                 #if self.obj_mask == True:
                     #self.mascara = Mask_Map(self.terrain, self.screen)
