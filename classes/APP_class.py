@@ -317,14 +317,18 @@ class App:
             self.ui_manager.process_events(event)
 
             if event.type == KEYDOWN:
-                if event.key == K_LEFT:
-                    self.offset_x += c.TILE_SIZE
-                elif event.key == K_RIGHT:
-                    self.offset_x -= c.TILE_SIZE
-                elif event.key == K_UP:
-                    self.offset_y += c.TILE_SIZE
-                elif event.key == K_DOWN:
-                    self.offset_y -= c.TILE_SIZE
+                if event.key == K_LEFT and self.offset_x <= -c.TILE_SIZE:
+                    #if self.offset_x <= -c.TILE_SIZE:
+                        self.offset_x += c.TILE_SIZE
+                elif event.key == K_RIGHT and self.offset_x >= -((self.terrain.tam_col-(c.SCREEN_WIDTH//(c.TILE_SIZE)))*c.TILE_SIZE):
+                    #if self.offset_x >= -((self.terrain.tam_col-(c.SCREEN_WIDTH//(c.TILE_SIZE)))*c.TILE_SIZE):
+                        self.offset_x -= c.TILE_SIZE
+                elif event.key == K_UP and self.offset_y <= -c.TILE_SIZE:
+                    #if self.offset_y <= -c.TILE_SIZE:
+                        self.offset_y += c.TILE_SIZE
+                elif event.key == K_DOWN and self.offset_y >= -((self.terrain.tam_fila-(c.SCREEN_HEIGHT//(c.TILE_SIZE)))*c.TILE_SIZE):
+                    #if self.offset_y >= -((self.terrain.tam_fila-(c.SCREEN_HEIGHT//(c.TILE_SIZE)))*c.TILE_SIZE):
+                        self.offset_y -= c.TILE_SIZE
 
             #IF BUTTON PRESSED
             if event.type == pgui.UI_BUTTON_PRESSED:
