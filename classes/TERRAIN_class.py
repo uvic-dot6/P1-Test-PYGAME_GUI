@@ -40,11 +40,8 @@ class Terrain:
 
                 pg.draw.rect(screen, color, pg.Rect((x+1) * c.TILE_SIZE + offset_x, (y+1) * c.TILE_SIZE + offset_y, c.TILE_SIZE, c.TILE_SIZE)) # Dibujar celda
                 pg.draw.rect(screen, c.BORDER_GRID, pg.Rect((x+1) * c.TILE_SIZE + offset_x, (y+1) * c.TILE_SIZE + offset_y, c.TILE_SIZE, c.TILE_SIZE), 1) # Dibujar borde de la celda (grid)
-                self.draw_i(screen, offset_x, offset_y)
-                self.draw_f(screen, offset_x, offset_y)
-                self.draw_v(screen, offset_x, offset_y)
-                self.draw_o(screen, offset_x, offset_y)
-    
+                
+                
     #Dibujar sistema de coordenadas
     def draw_grid(self, screen, offset_x, offset_y):
         # Dibujar los recuadros de las etiquetas (columnas)
