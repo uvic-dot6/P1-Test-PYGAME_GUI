@@ -419,6 +419,11 @@ class App:
             if self.terrain:
                 #self.terrain.draw_grid(self.screen, self.offset_x, self.offset_y)
                 self.terrain.draw_matriz(self.screen, self.offset_x, self.offset_y)
+                
+                self.terrain.draw_i(self.screen, self.offset_x, self.offset_y)
+                self.terrain.draw_f(self.screen, self.offset_x, self.offset_y)
+                self.terrain.draw_v(self.screen, self.offset_x, self.offset_y)
+                self.terrain.draw_o(self.screen, self.offset_x, self.offset_y)
                 self.terrain.draw_grid(self.screen, self.offset_x, self.offset_y)
                 
                 #Crear Mascara
