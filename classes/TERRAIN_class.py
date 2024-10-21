@@ -5,8 +5,8 @@ from pygame.locals import *
 class Terrain:
     visited = [(1,1),(1,2),(1,3),(2,3)]
     decision = [(1,1),(1,2),(1,3),(2,3)]
-    initial_point = (1, 1) #(X,Y)
-    end_point = (2, 3) #(X,Y)
+    initial_point = None #(X,Y)
+    end_point = None #(X,Y)
     actual_position = []
     
     text_list = []
@@ -100,6 +100,8 @@ class Terrain:
         return a
     
     def asignar_celda_inicial(self, x, y):
+        #print(f"Valor de X: {x}")
+        #print(f"Valor de Y: {y}")
         self.initial_point = (x, y)
     def asignar_celda_final(self, x, y):
         self.end_point = (x, y)
@@ -108,13 +110,13 @@ class Terrain:
         label = chr(73)  # I es 73 en ASCII
         font = pg.font.Font(None, 18)
         text_surface = font.render(label, True, c.WHITE, c.BLACK)
-        screen.blit(text_surface, (2 + self.initial_point[1] * c.TILE_SIZE + offset_x, self.initial_point[0] * c.TILE_SIZE + offset_y + 16))
+        screen.blit(text_surface, (2 + (self.initial_point[1]+1) * c.TILE_SIZE + offset_x, (self.initial_point[0]+1) * c.TILE_SIZE + offset_y + 16))
 
     def draw_f(self, screen, offset_x, offset_y):
         label = chr(70)  # F es 73 en ASCII
         font = pg.font.Font(None, 18)
         text_surface = font.render(label, True, c.WHITE, c.BLACK)
-        screen.blit(text_surface, (16 + self.end_point[1] * c.TILE_SIZE + offset_x, self.end_point[0] * c.TILE_SIZE + offset_y + 16))
+        screen.blit(text_surface, (16 + (self.end_point[1]+1) * c.TILE_SIZE + offset_x, (self.end_point[0]+1) * c.TILE_SIZE + offset_y + 16))
 
     def draw_v(self, screen, offset_x, offset_y):
         label = chr(86) # V es 86 en ASCII

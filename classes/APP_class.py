@@ -9,12 +9,15 @@ from .TERRAIN_class import Terrain
 from .MASK_class import Mask_Map
 
 class App:
+    initial = True
     selected_cell = None
     archivo = None
     obj_mask = True
     datos_iniciales = True
     offset_x = 0  # Desplazamiento en el eje X
     offset_y = 0  # Desplazamiento en el eje Y
+    x_initial = None
+    y_initial = None
     
     def __init__(self):
         #Inicio del programa
@@ -45,8 +48,18 @@ class App:
             #2
         screen_width = self.screen.get_width()
         screen_height = self.screen.get_height()
+        self.side_panel_layout_rect = pg.Rect(0, 0, c.SIDE_PANEL, c.SCREEN_HEIGHT//4)
         self.side_panel_layout_rect.bottomright = (screen_width, screen_height)
         self.side_panel_bottom = pgui.elements.UIPanel(
+            relative_rect = self.side_panel_layout_rect,  # Panel lateral en el lado derecho
+            starting_height = 1,
+            manager = self.ui_manager
+        )
+            #3
+        screen_width = self.screen.get_width()
+        screen_height = self.screen.get_height()
+        self.side_panel_layout_rect.bottomright = (screen_width, screen_height*(3/4))
+        self.side_panel_midle = pgui.elements.UIPanel(
             relative_rect = self.side_panel_layout_rect,  # Panel lateral en el lado derecho
             starting_height = 1,
             manager = self.ui_manager
@@ -82,6 +95,8 @@ class App:
         #Entrada de la posicion inicial y final
         self.text_entry_line_3 = None
         self.text_entry_line_4 = None
+        self.text_entry_line_5 = None
+        self.text_entry_line_6 = None
         
         """ Metododo para inicializar los botones """
         self.init_ui()
@@ -162,6 +177,23 @@ class App:
             container = self.side_panel_top,
             visible = False  # Se crea invisible al principio
         )
+            #INITIAL POSITION LABEL
+        self.initial_position = pgui.elements.UILabel(
+            relative_rect = pg.Rect((15, 15), (120, 20)),
+            text = 'Posición Inicial',
+            manager = self.ui_manager,
+            container = self.side_panel_midle,
+            visible = False  # Se crea invisible al principio
+        )
+            #FINAL POSITION LABEL
+        self.final_position = pgui.elements.UILabel(
+            relative_rect = pg.Rect((15, 75), (120, 20)),
+            text = 'Posición Final',
+            manager = self.ui_manager,
+            container = self.side_panel_midle,
+            visible = False  # Se crea invisible al principio
+        )
+        
             # TEXT ENTRY 1
         self.text_entry_line_1 = pgui.elements.UITextEntryLine(
             pg.Rect((120, 35), (40, 30)),
@@ -202,6 +234,26 @@ class App:
         )
         self.text_entry_line_4.set_allowed_characters('numbers')
         #self.text_entry_line_2.set_text_length_limit()
+            # TEXT ENTRY 5
+        self.text_entry_line_5 = pgui.elements.UITextEntryLine(
+            pg.Rect((55, 35), (40, 30)),
+            self.ui_manager,
+            container = self.side_panel_midle,
+            visible = False,
+            initial_text = '1a'
+        )
+        self.text_entry_line_5.set_allowed_characters('alpha_numeric')
+        self.text_entry_line_5.set_text_length_limit(2)
+            # TEXT ENTRY 6
+        self.text_entry_line_6 = pgui.elements.UITextEntryLine(
+            relative_rect = pg.Rect((55, 100), (40, 30)),
+            manager = self.ui_manager,
+            container = self.side_panel_midle,
+            visible = False,
+            initial_text = '1b'
+        )
+        self.text_entry_line_6.set_allowed_characters('alpha_numeric')
+        self.text_entry_line_6.set_text_length_limit(2)
 
     def abrir_explorador_archivos(self):
         # Crear una instancia de Tkinter y ocultar la ventana
@@ -250,7 +302,21 @@ class App:
 
     #Funcion para definir el inicio, final, y agente a seleccionar
     def initial_screen(self):
-    
+        if self.terrain:
+            self.initial_position.show()
+            self.final_position.show()
+            self.text_entry_line_5.show()
+            self.text_entry_line_6.show()
+            self.process_events()
+            if self.terrain.initial_point is not None and self.terrain.end_point is not None:
+                self.initial = False
+                print("INITIAL ES F A L S O")
+            #self.process_events()
+            #Display Mapa
+            #Indicar Inicio
+            #Indicar Final
+            #Seleccionar Agente
+            #Indicar Prioridad para Busqueda No Informada Profundidad
     def update_ui(self, cell_pos, terrain):
         # Actualiza la posición de los botones y los valores
             #Posicion relativa a su contenedor
@@ -284,9 +350,12 @@ class App:
             container = self.side_panel_top,
             manager = self.ui_manager
         )
-
+        
+            #self.text_entry_line_6.set_text(str(cell_pos[0] + 1))
+        
         self.text_entry_line_1.set_text(terrain.convert_coordinate_to_letter(cell_pos[1]))
-        self.text_entry_line_2.set_text(str(cell_pos[0] + 1))
+        self.text_entry_line_2.set_text(str(cell_pos[0]+1))
+        
         # Crea un nuevo menú desplegable con el valor actualizado de la celda seleccionada
             #Las opciones que sea van a mostrar son del terreno si el valor de la matriz es menor a 7
         print(cell_pos[0], cell_pos[1])
@@ -326,20 +395,20 @@ class App:
                 self.running = False
 
             self.ui_manager.process_events(event)
-
-            if event.type == KEYDOWN:
-                if event.key == K_LEFT and self.offset_x <= -c.TILE_SIZE:
-                    #if self.offset_x <= -c.TILE_SIZE:
-                        self.offset_x += c.TILE_SIZE
-                elif event.key == K_RIGHT and self.offset_x >= -((self.terrain.tam_col-(c.SCREEN_WIDTH//(c.TILE_SIZE)))*c.TILE_SIZE):
-                    #if self.offset_x >= -((self.terrain.tam_col-(c.SCREEN_WIDTH//(c.TILE_SIZE)))*c.TILE_SIZE):
-                        self.offset_x -= c.TILE_SIZE
-                elif event.key == K_UP and self.offset_y <= -c.TILE_SIZE:
-                    #if self.offset_y <= -c.TILE_SIZE:
-                        self.offset_y += c.TILE_SIZE
-                elif event.key == K_DOWN and self.offset_y >= -((self.terrain.tam_fila-(c.SCREEN_HEIGHT//(c.TILE_SIZE)))*c.TILE_SIZE):
-                    #if self.offset_y >= -((self.terrain.tam_fila-(c.SCREEN_HEIGHT//(c.TILE_SIZE)))*c.TILE_SIZE):
-                        self.offset_y -= c.TILE_SIZE
+            
+            if (not self.text_entry_line_5.is_focused and not self.text_entry_line_6.is_focused and not self.text_entry_line_1.is_focused and not self.text_entry_line_2.is_focused) and event.type == KEYDOWN:
+                    if event.key == K_LEFT and self.offset_x <= -c.TILE_SIZE:
+                        #if self.offset_x <= -c.TILE_SIZE:
+                            self.offset_x += c.TILE_SIZE
+                    elif event.key == K_RIGHT and self.offset_x >= -((self.terrain.tam_col-(c.SCREEN_WIDTH//(c.TILE_SIZE)))*c.TILE_SIZE):
+                        #if self.offset_x >= -((self.terrain.tam_col-(c.SCREEN_WIDTH//(c.TILE_SIZE)))*c.TILE_SIZE):
+                            self.offset_x -= c.TILE_SIZE
+                    elif event.key == K_UP and self.offset_y <= -c.TILE_SIZE:
+                        #if self.offset_y <= -c.TILE_SIZE:
+                            self.offset_y += c.TILE_SIZE
+                    elif event.key == K_DOWN and self.offset_y >= -((self.terrain.tam_fila-(c.SCREEN_HEIGHT//(c.TILE_SIZE)))*c.TILE_SIZE):
+                        #if self.offset_y >= -((self.terrain.tam_fila-(c.SCREEN_HEIGHT//(c.TILE_SIZE)))*c.TILE_SIZE):
+                            self.offset_y -= c.TILE_SIZE
 
             #IF BUTTON PRESSED
             if event.type == pgui.UI_BUTTON_PRESSED:
@@ -366,7 +435,7 @@ class App:
                         self.selected_cell = (cell_y, cell_x)
                         print(f"Celda seleccionada: ({cell_y}, {cell_x})")"""
             #Si existe un objeto Terrain se ejecuta este bloque de codigo
-            if self.terrain:
+            if self.initial == False:
                 #Se detecta la posicion donde se presiona el click izquierdo del mouse
                 if event.type == MOUSEBUTTONDOWN and event.button == 1:  # Clic izquierdo
                     #Se guarda en una tupla los valores
@@ -408,6 +477,33 @@ class App:
                     if event.ui_element == self.text_entry_line_2:
                         self.change_coordinate_X(self.text_entry_line_2.get_text())
                         self.text_entry_line_2.redraw()
+            
+            else:
+                if event.type == pg.USEREVENT and event.user_type == pgui.UI_TEXT_ENTRY_FINISHED:
+                    if event.ui_element == self.text_entry_line_5:
+                        string_5 = self.text_entry_line_5.get_text()
+                        letter = string_5[1].upper()
+                        self.y_initial = self.terrain.convert_letter_to_coordinate(letter)
+                        self.x_initial = int(string_5[0])-1
+                        self.selected_cell = [self.x_initial, self.y_initial]
+                        self.terrain.asignar_celda_inicial(self.x_initial, self.y_initial)
+                        #self.update_ui(self.selected_cell, self.terrain)
+                        self.text_entry_line_5.set_text(str(self.terrain.initial_point[0]+1) + self.terrain.convert_coordinate_to_letter(self.terrain.initial_point[1]))
+                        self.text_entry_line_5.redraw()
+                        self.text_entry_line_5.disable()
+                    
+                    if event.ui_element == self.text_entry_line_6:
+                        string_5 = self.text_entry_line_6.get_text()
+                        letter = string_5[1].upper()
+                        y_initial = self.terrain.convert_letter_to_coordinate(letter)
+                        x_initial = int(string_5[0])-1
+                        #final_cell = [x_initial, y_initial]
+                        self.terrain.asignar_celda_final(x_initial, y_initial)
+                        self.text_entry_line_6.set_text(str(self.terrain.end_point[0]+1) + self.terrain.convert_coordinate_to_letter(self.terrain.end_point[1]))
+                        #self.update_ui(final_cell, self.terrain)
+                        self.text_entry_line_6.redraw()
+                        self.text_entry_line_6.disable()
+
 
                 
     def run(self):
@@ -422,12 +518,16 @@ class App:
             if self.terrain:
                 #self.terrain.draw_grid(self.screen, self.offset_x, self.offset_y)
                 self.terrain.draw_matriz(self.screen, self.offset_x, self.offset_y)
-                
-                self.terrain.draw_i(self.screen, self.offset_x, self.offset_y)
-                self.terrain.draw_f(self.screen, self.offset_x, self.offset_y)
-                self.terrain.draw_v(self.screen, self.offset_x, self.offset_y)
-                self.terrain.draw_o(self.screen, self.offset_x, self.offset_y)
+                if self.initial == False: 
+                    self.terrain.draw_i(self.screen, self.offset_x, self.offset_y)
+                    self.terrain.draw_f(self.screen, self.offset_x, self.offset_y)
+                    self.terrain.draw_v(self.screen, self.offset_x, self.offset_y)
+                    self.terrain.draw_o(self.screen, self.offset_x, self.offset_y)
+
                 self.terrain.draw_grid(self.screen, self.offset_x, self.offset_y)
+                
+                if self.initial == True:
+                    self.initial_screen()
                 
                 #Crear Mascara
                 #if self.obj_mask == True:
