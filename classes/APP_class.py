@@ -247,6 +247,9 @@ class App:
         self.selected_cell = new_cell_pos
         #print(new_cell_pos[0],new_cell_pos[1])
         self.update_ui(new_cell_pos, self.terrain)
+
+    #Funcion para definir el inicio, final, y agente a seleccionar
+    def initial_screen(self):
     
     def update_ui(self, cell_pos, terrain):
         # Actualiza la posición de los botones y los valores
