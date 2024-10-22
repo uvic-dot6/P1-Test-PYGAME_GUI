@@ -7,6 +7,7 @@ from pygame.locals import *
 import pygame_gui as pgui
 from .TERRAIN_class import Terrain
 from .MASK_class import Mask_Map
+from .AGENT_class import *
 
 class App:
     initial = True
@@ -21,8 +22,9 @@ class App:
     
     def __init__(self):
         #Inicio del programa
+        
         pg.init()
-
+        
         #Nombre del programa mostrado
         pg.display.set_caption("Practica 1")
 
@@ -32,6 +34,9 @@ class App:
         #Display y UIManager
         self.screen = pg.display.set_mode((c.SCREEN_WIDTH + c.SIDE_PANEL, c.SCREEN_HEIGHT))
         self.ui_manager = pgui.UIManager((c.SCREEN_WIDTH + c.SIDE_PANEL, c.SCREEN_HEIGHT))
+        self.agent = None
+        self.terrain = None
+        self.mascara = None
 
         #size_map = pg.Rect(0, 0, c.SCREEN_WIDTH, c.SCREEN_HEIGHT)
 
@@ -73,10 +78,6 @@ class App:
             container = self.side_panel_bottom,
             visible = True  # Se crea invisible al principio
         )
-
-        
-        self.terrain = None
-        self.mascara = None
 
         #self.recreate_ui()
 
@@ -243,7 +244,7 @@ class App:
             initial_text = '1a'
         )
         self.text_entry_line_5.set_allowed_characters('alpha_numeric')
-        self.text_entry_line_5.set_text_length_limit(2)
+        self.text_entry_line_5.set_text_length_limit(3)
             # TEXT ENTRY 6
         self.text_entry_line_6 = pgui.elements.UITextEntryLine(
             relative_rect = pg.Rect((55, 100), (40, 30)),
@@ -253,7 +254,7 @@ class App:
             initial_text = '1b'
         )
         self.text_entry_line_6.set_allowed_characters('alpha_numeric')
-        self.text_entry_line_6.set_text_length_limit(2)
+        self.text_entry_line_6.set_text_length_limit(3)
 
     def abrir_explorador_archivos(self):
         # Crear una instancia de Tkinter y ocultar la ventana
@@ -300,6 +301,27 @@ class App:
         #print(new_cell_pos[0],new_cell_pos[1])
         self.update_ui(new_cell_pos, self.terrain)
 
+    def gestionar_teclas(self, event):
+    # Verificar que el evento sea de tipo KEYDOWN
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_a and (self.agent.x > 0):
+                #print(self.agent.x)
+                self.agent.x -= 1  # Mover hacia la izquierda
+                self.agent.actualizar_costo(self.terrain)
+            elif event.key == pg.K_d and (self.agent.x < self.terrain.tam_col - 1):
+                #print(self.agent.x)
+                self.agent.x += 1  # Mover hacia la derecha
+                self.agent.actualizar_costo(self.terrain)
+            elif event.key == pg.K_s and (self.agent.y < self.terrain.tam_fila - 1):
+                #print(self.agent.y)
+                self.agent.y += 1  # Mover hacia abajo
+                self.agent.actualizar_costo(self.terrain)
+            elif event.key == pg.K_w and (self.agent.y > 0):
+                #print(self.agent.y)
+                self.agent.y -= 1  # Mover hacia arriba
+                self.agent.actualizar_costo(self.terrain)
+
+
     #Funcion para definir el inicio, final, y agente a seleccionar
     def initial_screen(self):
         if self.terrain:
@@ -309,6 +331,7 @@ class App:
             self.text_entry_line_6.show()
             self.process_events()
             if self.terrain.initial_point is not None and self.terrain.end_point is not None:
+                self.agent = Agent_Human(self.x_initial, self.y_initial)
                 self.initial = False
                 print("INITIAL ES F A L S O")
             #self.process_events()
@@ -396,6 +419,9 @@ class App:
 
             self.ui_manager.process_events(event)
             
+            #key = pg.key.get_pressed()
+            self.gestionar_teclas(event)
+
             if (not self.text_entry_line_5.is_focused and not self.text_entry_line_6.is_focused and not self.text_entry_line_1.is_focused and not self.text_entry_line_2.is_focused) and event.type == KEYDOWN:
                     if event.key == K_LEFT and self.offset_x <= -c.TILE_SIZE:
                         #if self.offset_x <= -c.TILE_SIZE:
@@ -482,9 +508,9 @@ class App:
                 if event.type == pg.USEREVENT and event.user_type == pgui.UI_TEXT_ENTRY_FINISHED:
                     if event.ui_element == self.text_entry_line_5:
                         string_5 = self.text_entry_line_5.get_text()
-                        letter = string_5[1].upper()
+                        letter = string_5[-1].upper()
                         self.y_initial = self.terrain.convert_letter_to_coordinate(letter)
-                        self.x_initial = int(string_5[0])-1
+                        self.x_initial = int(string_5[0:-1])-1
                         self.selected_cell = [self.x_initial, self.y_initial]
                         self.terrain.asignar_celda_inicial(self.x_initial, self.y_initial)
                         #self.update_ui(self.selected_cell, self.terrain)
@@ -494,9 +520,9 @@ class App:
                     
                     if event.ui_element == self.text_entry_line_6:
                         string_5 = self.text_entry_line_6.get_text()
-                        letter = string_5[1].upper()
+                        letter = string_5[-1].upper()
                         y_initial = self.terrain.convert_letter_to_coordinate(letter)
-                        x_initial = int(string_5[0])-1
+                        x_initial = int(string_5[0:-1])-1
                         #final_cell = [x_initial, y_initial]
                         self.terrain.asignar_celda_final(x_initial, y_initial)
                         self.text_entry_line_6.set_text(str(self.terrain.end_point[0]+1) + self.terrain.convert_coordinate_to_letter(self.terrain.end_point[1]))
@@ -504,6 +530,7 @@ class App:
                         self.text_entry_line_6.redraw()
                         self.text_entry_line_6.disable()
 
+    
 
                 
     def run(self):
@@ -519,6 +546,7 @@ class App:
                 #self.terrain.draw_grid(self.screen, self.offset_x, self.offset_y)
                 self.terrain.draw_matriz(self.screen, self.offset_x, self.offset_y)
                 if self.initial == False: 
+                    self.agent.draw_human(self.screen, self.offset_x, self.offset_y)
                     self.terrain.draw_i(self.screen, self.offset_x, self.offset_y)
                     self.terrain.draw_f(self.screen, self.offset_x, self.offset_y)
                     self.terrain.draw_v(self.screen, self.offset_x, self.offset_y)
