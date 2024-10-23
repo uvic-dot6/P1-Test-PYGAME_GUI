@@ -1,0 +1,43 @@
+{
+    "@img_button":{
+        "colours":{
+                "normal_bg":"Cyan",
+                "hovered_bg": "Red",
+                "disabled_bg": "Red",
+                "selected_bg": "Red",
+                "normal_border": "Cyan",
+                "hovered_border": "Cyan",
+                "disabled_border": "Cyan",
+                "selected_border": "Green",
+                "active_border": "Cyan"
+            }
+    },
+    "#human_button": {  
+            "images": {
+                "normal_image": {
+                    "path": "AGENT_VIEW/img/human.png"
+                }
+            }            
+    },
+    "#monkey_button":{
+        "images":{
+            "normal_image":{
+                "path":"AGENT_VIEW/img/monkey.png"
+            }
+        }
+    },
+    "#octopus_button":{
+        "images":{
+            "normal_image":{
+                "path":"AGENT_VIEW/img/octopus.png"
+            }
+        }
+    },
+    "#sasquatch_button":{
+        "images":{
+            "normal_image":{
+                "path":"AGENT_VIEW/img/sasquatch.png"
+            }
+        }
+    }
+}
