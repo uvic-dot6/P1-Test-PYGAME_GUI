@@ -1,0 +1,36 @@
+{
+    "@panel_header":{
+        "colours":{
+            "dark_bg":"Cyan"
+        }
+    },
+    "@title":
+     {
+         "colours":
+         {
+             "normal_text": "#000000"
+         }
+        },
+    "@menu_container_img":{
+        "colours":{
+            "dark_bg":"#000000"
+        },
+        "misc":{
+            "border_width":"0"
+        }
+    },
+    "@img_panel":{
+        "colours":{
+            "dark_bg":"Cyan",
+            "normal_border":"Green"
+        },
+        "misc":{
+        "border_width": "0"
+        }
+    },
+    "@agent_label":{
+        "colours":{
+            "normal_text":"Red"
+        }
+    }
+}

@@ -8,6 +8,7 @@ import pygame_gui as pgui
 from .TERRAIN_class import Terrain
 from .MASK_class import Mask_Map
 from .AGENT_class import *
+from AGENT_VIEW.SELECT_AGENT import SeleccionarAgente
 
 class App:
     initial = True
@@ -34,7 +35,11 @@ class App:
         #Display y UIManager
         self.screen = pg.display.set_mode((c.SCREEN_WIDTH + c.SIDE_PANEL, c.SCREEN_HEIGHT))
         self.ui_manager = pgui.UIManager((c.SCREEN_WIDTH + c.SIDE_PANEL, c.SCREEN_HEIGHT))
-        self.agent = None
+        self.ui_manager.get_theme().load_theme("AGENT_VIEW/Styles.json")
+        self.ui_manager.get_theme().load_theme('AGENT_VIEW/buttonAgents.json')
+        self.ui_manager.get_theme().load_theme('front/Sensores/buttonSensores.json')
+        self.ui_manager.get_theme().load_theme('front/Sensores/StylesSensors.json')
+        self.ui_manager.agent = None
         self.terrain = None
         self.mascara = None
 
@@ -98,7 +103,8 @@ class App:
         self.text_entry_line_4 = None
         self.text_entry_line_5 = None
         self.text_entry_line_6 = None
-        
+        self.state="menu"
+        self.agent_type=None
         """ Metododo para inicializar los botones """
         self.init_ui()
 
@@ -129,6 +135,13 @@ class App:
             container = self.side_panel_bottom,
             visible = True  # Se crea invisible al principio
         )
+        self.load_agent= pgui.elements.UIButton(
+            relative_rect=pg.Rect((15,115, ), (100, 50)),
+            text='Seleccionar Agente',
+            manager = self.ui_manager,
+            container = self.side_panel_bottom,
+            visible = True  # Se crea invisible al principio
+        ) 
             #DROP DOWM MENU BUTTON TERRAIN
         self.test_drop_down = pgui.elements.UIDropDownMenu(
             ['Bosque', 'Agua', 'Tierra', 'Montaña', 'Arena', 'Pantano', 'Nieve'],
@@ -330,8 +343,15 @@ class App:
             self.text_entry_line_5.show()
             self.text_entry_line_6.show()
             self.process_events()
-            if self.terrain.initial_point is not None and self.terrain.end_point is not None:
-                self.agent = Agent_Human(self.x_initial, self.y_initial)
+            if self.terrain.initial_point is not None and self.terrain.end_point is not None and self.agent_type is not None:
+                if self.agent_type=="Human":
+                    self.agent = Agent_Human(self.x_initial, self.y_initial)
+                elif self.agent_type=="Monkey":
+                    self.agent = Agent_Monkey(self.x_initial, self.y_initial)
+                elif self.agent_type=="Octopus":
+                    self.agent = Agent_Octopus(self.x_initial, self.y_initial)
+                elif self.agent_type=="Sasquatch":
+                    self.agent = Agent_Sasquatch(self.x_initial, self.y_initial)
                 self.initial = False
                 print("INITIAL ES F A L S O")
             #self.process_events()
@@ -448,6 +468,20 @@ class App:
                 if event.ui_element == self.save_copy_map:
                     self.save_as_changes_map()
                     print("Haz presionado salvar como...")
+                if event.ui_element==self.load_agent:
+                    self.current_view=None
+                    self.current_view=SeleccionarAgente(self.screen,self.ui_manager)
+                    self.state="agent"
+            if self.state=="agent" :
+                    self.current_view.process_events(event)
+                    self.agent_type=self.current_view.get_agent()
+                    #print(self.agent_type)
+                    if self.agent_type is not None:
+                        print(self.agent_type)
+                        self.state="menu"
+                        self.current_view=None
+                        self.current_view=self.screen
+                    
             #Seleccionar inicio y fin
             """if self.terrain:
                 if event.type == MOUSEBUTTONDOWN and event.button == 1:
@@ -576,5 +610,5 @@ class App:
             
             # Procesador de eventos
             self.process_events()
-
+            
         pg.quit()
