@@ -303,7 +303,7 @@ class App:
 
     def gestionar_teclas(self, event):
     # Verificar que el evento sea de tipo KEYDOWN
-        if event.type == pg.KEYDOWN:
+        if event.type == pg.KEYDOWN and (not self.text_entry_line_5.is_focused and not self.text_entry_line_6.is_focused):
             if event.key == pg.K_a and (self.agent.x > 0):
                 #print(self.agent.x)
                 self.agent.x -= 1  # Mover hacia la izquierda
