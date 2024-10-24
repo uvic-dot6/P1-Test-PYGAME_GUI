@@ -61,3 +61,9 @@ class Mask_Map:
             for x in range(((cell_x * c.TILE_SIZE) + 32), (((cell_x + 1) * c.TILE_SIZE) + 32)):
                 if self.mask.get_at((x, y)):  # Si el píxel está visible en la máscara(PEGAR)
                     self.masked_surface.set_at((x, y), screen.get_at((x, y)))
+
+    def blit_mascara(self, offset_x, offset_y, screen, terrain):
+        x = offset_x/c.TILE_SIZE
+        y = offset_y/c.TILE_SIZE
+        screen.blit(self.masked_surface, ((x * c.TILE_SIZE + offset_x % c.TILE_SIZE), (y * c.TILE_SIZE + offset_y % c.TILE_SIZE)))
+        #screen.blit(self.masked_surface, (0, y * c.TILE_SIZE + offset_y % c.TILE_SIZE))        

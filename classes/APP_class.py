@@ -6,7 +6,7 @@ import pygame as pg
 from pygame.locals import *
 import pygame_gui as pgui
 from .TERRAIN_class import Terrain
-from .MASK_class import Mask_Map
+from .MASCARA_class import *
 from .AGENT_class import *
 from AGENT_VIEW.SELECT_AGENT import SeleccionarAgente
 
@@ -511,7 +511,8 @@ class App:
                     #Se verifica si la posicion corresponde a alguna celda del mapa
                     #if mouse_pos[0] >= 32 and mouse_pos[1] >= 32 and 0 <= cell_x < self.terrain.tam_col and 0 <= cell_y < self.terrain.tam_fila:
                     if 0 <= cell_x < self.terrain.tam_col and 0 <= cell_y < self.terrain.tam_fila:
-                        self.mascara.unmask(cell_x, cell_y, self.mascara, self.screen, self.terrain, self.offset_x, self.offset_y, self.initial, self.agent)
+                        #self.mascara.unmask(cell_x, cell_y, self.mascara, self.screen, self.terrain, self.offset_x, self.offset_y, self.initial, self.agent)
+                        self.mascara.unmask_mask(cell_x, cell_y)
                         self.selected_cell = (cell_y, cell_x)
                         print(f"Celda seleccionada: ({cell_y}, {cell_x})")
                         # Mostrar botones cuando una celda es seleccionada
@@ -585,16 +586,6 @@ class App:
 
             # Dibujar Terrain
             if self.terrain:
-                """#Crear Mascara
-                if self.obj_mask == True:
-                    self.mascara = Mask_Map(self.terrain, self.screen, self.offset_x, self.offset_y)
-                    
-                    print("Se ejecuto 1 vez")
-                    self.screen.blit(self.mascara.masked_surface, (0, 0))
-                    self.obj_mask = False
-                #self.terrain.draw_grid(self.screen, self.offset_x, self.offset_y)
-                #self.terrain.draw_matriz(self.screen, self.offset_x, self.offset_y)
-                self.screen.blit(self.mascara.masked_surface, (0, 0))"""
                 #Al inicio se muestra el mapa y se indica el inicio y final con la funcion initial_screen
                 if  self.initial == True:
                     self.terrain.draw_matriz(self.screen, self.offset_x, self.offset_y)
@@ -602,35 +593,19 @@ class App:
                     self.initial_screen()
                 #Crear Mascara
                 if self.obj_mask == True and self.initial == False:
-                    self.mascara = Mask_Map(self.terrain, self.screen, self.offset_x, self.offset_y)
-                    
-                    print("Se ejecuto 1 vez")
-                    #self.screen.blit(self.mascara.masked_surface, (0, 0))
+                    self.mascara = Mask_map(self.terrain)
                     self.obj_mask = False
-                #Dibuja por encima al agente y las marcas
-                    
-                if self.initial == False: 
+                    print("Se ejecuto 1 vez")
+
+                #Dibuja por encima al agente y las marcas    
+                if self.initial == False:
+                    self.mascara.draw_mask(self.offset_x, self.offset_y, self.terrain, self.screen) 
                     self.agent.draw_human(self.screen, self.offset_x, self.offset_y)
                     self.terrain.draw_i(self.screen, self.offset_x, self.offset_y)
                     self.terrain.draw_f(self.screen, self.offset_x, self.offset_y)
                     self.terrain.draw_v(self.screen, self.offset_x, self.offset_y)
                     self.terrain.draw_o(self.screen, self.offset_x, self.offset_y)
-
-                if self.initial == False:
-                    #self.mascara.update_masked_surface()
-                    self.screen.blit(self.mascara.masked_surface, (0, 0))
-                    #self.terrain.draw_grid(self.screen, self.offset_x, self.offset_y)
-                
-                #Crear Mascara
-                """
-                if self.obj_mask == True:
-                    self.mascara = Mask_Map(self.terrain, self.screen)
-                    
-                    print("Se ejecuto 1 vez")
-                    self.screen.blit(self.mascara.masked_surface, (0, 0))
-                    self.obj_mask = False
-                
-                self.screen.blit(self.mascara.masked_surface, (0, 0))"""
+                    self.terrain.draw_grid(self.screen, self.offset_x, self.offset_y)
             
             # Check for inputs
                 # Respond to input
