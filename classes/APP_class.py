@@ -284,6 +284,13 @@ class App:
             container = self.side_panel_top,
             visible = True  # Se crea invisible al principio
         )
+        self.agent_label= pgui.elements.UILabel(
+            relative_rect = pg.Rect((45, 170), (200, 20)),
+            text = 'Agentes :',
+            manager = self.ui_manager,
+            container = self.side_panel_top,
+            visible = True  # Se crea invisible al principio
+        )
     def abrir_explorador_archivos(self):
         # Crear una instancia de Tkinter y ocultar la ventana
         root = tk.Tk()
@@ -347,7 +354,6 @@ class App:
 
     def update_infoLabels(self):#cambiar costoacuimulado y movimientos
         if(self.initial ==False and self.agent_type is not None):
-            print("cambiando")
             self.costo_acumulado.set_text("costo acumulado: " + str(self.agent.getCosto_acumulado()))
             self.cantidad_movimientos.set_text("Cantidad de movimientos" + str(self.agent.getCantidad_movimientos()))
     #Funcion para definir el inicio, final, y agente a seleccionar
@@ -488,6 +494,7 @@ class App:
                     #print(self.agent_type)
                     if self.agent_type is not None:
                         print(self.agent_type)
+                        self.agent_label.set_text("Agente: " + self.agent_type)
                         self.state="menu"
                         self.current_view=None
                         self.current_view=self.screen

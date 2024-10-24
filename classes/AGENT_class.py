@@ -82,14 +82,12 @@ class Agent:
         #self.costo_actual += cost_movement.get()
     def mover_agente_up(self,terrain):
         cell_value = terrain.matriz[self.y-1][self.x]
-        print(cell_value)
         cell_type = c.INT_TERRAIN.get(cell_value)
         if self.validar(cell_type):
             self.y-=1
             self.actualizar_nuevo_costo(self.cost_movement.get(cell_type))
     def mover_agente_down(self, terrain):
         cell_value = terrain.matriz[self.y+1][self.x]
-        print(cell_value)
         cell_type = c.INT_TERRAIN.get(cell_value)
         if self.validar(cell_type):
             self.y += 1
@@ -97,16 +95,13 @@ class Agent:
 
     def mover_agente_left(self, terrain):
         cell_value = terrain.matriz[self.y][self.x-1]
-        print(cell_value)
         cell_type = c.INT_TERRAIN.get(cell_value)
         if self.validar(cell_type):
             self.x -= 1
             self.actualizar_nuevo_costo(self.cost_movement.get(cell_type))
 
     def mover_agente_right(self, terrain):
-        print("right")
         cell_value = terrain.matriz[self.y][self.x+1]
-        print(cell_value)
         cell_type = c.INT_TERRAIN.get(cell_value)
         if self.validar(cell_type):
             self.x += 1
@@ -119,5 +114,4 @@ class Agent:
     def getCantidad_movimientos(self):
         return self.cantidad_movimientos
     def getCosto_acumulado(self):
-        print(self.costo_acumulado)
         return self.costo_acumulado
