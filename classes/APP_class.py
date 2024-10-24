@@ -9,6 +9,7 @@ from .TERRAIN_class import Terrain
 from .MASK_class import Mask_Map
 from .AGENT_class import *
 from AGENT_VIEW.SELECT_AGENT import SeleccionarAgente
+from pygame_gui.core import ObjectID
 
 class App:
     initial = True
@@ -37,8 +38,8 @@ class App:
         self.ui_manager = pgui.UIManager((c.SCREEN_WIDTH + c.SIDE_PANEL, c.SCREEN_HEIGHT))
         self.ui_manager.get_theme().load_theme("AGENT_VIEW/Styles.json")
         self.ui_manager.get_theme().load_theme('AGENT_VIEW/buttonAgents.json')
-        self.ui_manager.get_theme().load_theme('front/Sensores/buttonSensores.json')
-        self.ui_manager.get_theme().load_theme('front/Sensores/StylesSensors.json')
+        # self.ui_manager.get_theme().load_theme('front/Sensores/buttonSensores.json')
+        # self.ui_manager.get_theme().load_theme('front/Sensores/StylesSensors.json')
         self.ui_manager.agent = None
         self.terrain = None
         self.mascara = None
@@ -126,6 +127,7 @@ class App:
             text = 'Load Map',
             manager = self.ui_manager,
             container = self.side_panel_bottom,
+            object_id=ObjectID(class_id='@button'),
             visible = True  # Se crea invisible al principio
         )
             #SAVE AS A COPY MAP BUTTON
@@ -134,15 +136,41 @@ class App:
             text = 'Save As...',
             manager = self.ui_manager,
             container = self.side_panel_bottom,
+            object_id=ObjectID(class_id='@button'),
             visible = True  # Se crea invisible al principio
         )
         self.load_agent= pgui.elements.UIButton(
-            relative_rect=pg.Rect((15,115, ), (100, 50)),
+            relative_rect=pg.Rect((15,65), (200, 50)),
             text='Seleccionar Agente',
             manager = self.ui_manager,
             container = self.side_panel_bottom,
+            object_id=ObjectID(class_id='@button_load_agent'),
             visible = True  # Se crea invisible al principio
         ) 
+        self.dfs_button= pgui.elements.UIButton(
+            relative_rect=pg.Rect((10,135), (75, 40)),
+            text='DFS SOLVE',
+            manager = self.ui_manager,
+            container = self.side_panel_bottom,
+            object_id=ObjectID(class_id='@button'),
+            visible = True  # Se crea invisible al principio
+        )
+        self.bfs_button= pgui.elements.UIButton(
+            relative_rect=pg.Rect((90,135), (75, 40)),
+            text='BFS SOLVE',
+            manager = self.ui_manager,
+            container = self.side_panel_bottom,
+            object_id=ObjectID(class_id='@button'),
+            visible = True  # Se crea invisible al principio
+        )
+        self.Astar_button= pgui.elements.UIButton(
+            relative_rect=pg.Rect((170,135), (75, 40)),
+            text='A star SOLVE',
+            manager = self.ui_manager,
+            container = self.side_panel_bottom,
+            object_id=ObjectID(class_id='@button'),
+            visible = True  # Se crea invisible al principio
+        )
             #DROP DOWM MENU BUTTON TERRAIN
         self.test_drop_down = pgui.elements.UIDropDownMenu(
             ['Bosque', 'Agua', 'Tierra', 'Montaña', 'Arena', 'Pantano', 'Nieve'],
@@ -488,6 +516,12 @@ class App:
                     self.current_view=None
                     self.current_view=SeleccionarAgente(self.screen,self.ui_manager)
                     self.state="agent"
+                if event.ui_element==self.bfs_button and self.agent is not None:
+                    self.agent.resolverBFS()
+                if event.ui_element==self.dfs_button and self.agent is not None:
+                    self.agent.resolverDFS()
+                if event.ui_element==self.Astar_button and self.agent is not None:
+                    self.agent.resolverAstar()
             if self.state=="agent" :
                     self.current_view.process_events(event)
                     self.agent_type=self.current_view.get_agent()
@@ -513,6 +547,7 @@ class App:
                         print(f"Celda seleccionada: ({cell_y}, {cell_x})")"""
             #Si existe un objeto Terrain se ejecuta este bloque de codigo
             if self.initial == False:
+                self.agent.setTerrain(self.terrain)
                 #Se detecta la posicion donde se presiona el click izquierdo del mouse
                 if event.type == MOUSEBUTTONDOWN and event.button == 1:  # Clic izquierdo
                     #Se guarda en una tupla los valores

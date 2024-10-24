@@ -32,5 +32,15 @@
         "colours":{
             "normal_text":"Red"
         }
+    },
+    "@button_load_agent":{
+        "colours":{
+            "normal_bg":"Red"
+        }
+    },
+    "@button":{
+        "colours":{
+            "normal_bg":"Blue"
+        }
     }
 }

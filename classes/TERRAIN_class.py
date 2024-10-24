@@ -3,8 +3,8 @@ import pygame as pg
 from pygame.locals import *
 
 class Terrain:
-    visited = [(1,1),(1,2),(1,3),(2,3)]
-    decision = [(1,1),(1,2),(1,3),(2,3)]
+    visited = []
+    decision = []
     initial_point = None #(X,Y)
     end_point = None #(X,Y)
     actual_position = []
@@ -123,11 +123,19 @@ class Terrain:
         font = pg.font.Font(None, 18)
         text_surface = font.render(label, True, c.WHITE, c.BLACK)
         for v in self.visited:
-            screen.blit(text_surface, (2 + v[1] * c.TILE_SIZE + offset_x, v[0] * c.TILE_SIZE + offset_y + 1))
+            screen.blit(text_surface, (2 + v[1] * c.TILE_SIZE +c.TILE_SIZE, v[0] * c.TILE_SIZE  + 1 + c.TILE_SIZE))
 
     def draw_o(self, screen, offset_x, offset_y):
         label = chr(79) # O es 79 en ASCII
         font = pg.font.Font(None, 18)
         text_surface = font.render(label, True, c.WHITE, c.BLACK)
         for o in self.decision:
-            screen.blit(text_surface, (16 + o[1] * c.TILE_SIZE + offset_x, o[0] * c.TILE_SIZE + offset_y + 1))
+            screen.blit(text_surface, (16 + o[1] * c.TILE_SIZE + offset_x + c.TILE_SIZE, o[0] * c.TILE_SIZE + offset_y + 1 + c.TILE_SIZE))
+    def addDecision(self,x,y):
+        self.decision.append((x,y))
+    def addVisited(self,x,y):
+        self.visited.append((x,y))
+    def getEndpoint_x(self):
+        return self.end_point[1]
+    def getEndpoint_y(self):
+        return self.end_point[0]
