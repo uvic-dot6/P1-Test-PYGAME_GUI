@@ -35,7 +35,6 @@ class DFS:
                     return True
                 # Si no se encuentra la meta, retrocedemos el movimiento
                 self.agent.x, self.agent.y = x, y  # Regresamos a la posición anterior
-
         return False
 
 

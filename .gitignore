@@ -1,0 +1,54 @@
+# Entornos virtuales
+venv/
+env/
+.venv/
+.env/
+
+# Archivos de configuración del entorno de desarrollo
+.idea/
+.vscode/
+*.code-workspace
+
+# Archivos compilados de Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__
+
+# Archivos de caché y logs
+*.log
+*.pot
+*.mo
+*.cache
+*.coverage
+*.cover
+*.py,cover
+.hypothesis/
+.tox/
+.nox/
+.pytest_cache/
+.coverage.*
+
+# Dependencias instaladas
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg-info/
+lib/
+lib64/
+__pypackages__/
+
+# Archivos de configuración de herramientas
+*.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
