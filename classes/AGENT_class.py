@@ -5,7 +5,7 @@ class Agent:
     pos_f = None
     costo_actual = None
     costo_final = None
-    def __init__(self, y, x,agent_type):
+    def __init__(self, y, x, agent_type):
         self.costo_actual = 0
         self.x = x
         self.y = y
@@ -74,42 +74,68 @@ class Agent:
     def actualizar_nuevo_costo(self,nuevocosto):
         self.cantidad_movimientos+=1
         self.costo_acumulado+=nuevocosto
-    def mover_agente_up(self,terrain):
+
+    def mover_agente_up(self, terrain, mascara):
         cell_value = terrain.matriz[self.y-1][self.x]
         cell_type = c.INT_TERRAIN.get(cell_value)
         if self.validar(cell_type):
             self.y-=1
+            self.sensor_cuatro(terrain, mascara, self.x, self.y)
             self.actualizar_nuevo_costo(self.cost_movement.get(cell_type))
-    def mover_agente_down(self, terrain):
+
+    def mover_agente_down(self, terrain, mascara):
         cell_value = terrain.matriz[self.y+1][self.x]
         cell_type = c.INT_TERRAIN.get(cell_value)
         if self.validar(cell_type):
             self.y += 1
+            self.sensor_cuatro(terrain, mascara, self.x, self.y)
             self.actualizar_nuevo_costo(self.cost_movement.get(cell_type))
 
-    def mover_agente_left(self, terrain):
+    def mover_agente_left(self, terrain, mascara):
         cell_value = terrain.matriz[self.y][self.x-1]
         cell_type = c.INT_TERRAIN.get(cell_value)
         if self.validar(cell_type):
             self.x -= 1
+            self.sensor_cuatro(terrain, mascara, self.x, self.y)
             self.actualizar_nuevo_costo(self.cost_movement.get(cell_type))
 
-    def mover_agente_right(self, terrain):
+    def mover_agente_right(self, terrain, mascara):
         cell_value = terrain.matriz[self.y][self.x+1]
         cell_type = c.INT_TERRAIN.get(cell_value)
         if self.validar(cell_type):
             self.x += 1
+            self.sensor_cuatro(terrain, mascara, self.x, self.y)
             self.actualizar_nuevo_costo(self.cost_movement.get(cell_type))
 
     def validar(self, cell_type):
         if self.cost_movement.get(cell_type) is not None:
             return True
         return False
+    
     def getCantidad_movimientos(self):
         return self.cantidad_movimientos
+    
     def getCosto_acumulado(self):
         return self.costo_acumulado
     
+    def unmask_pos_ini(self, mascara, terrain):
+        mascara.unmask_mask(self.x, self.y)
+        self.sensor_cuatro(terrain, mascara, self.x, self.y)
+
+    def sensor_cuatro(self, terrain, mascara, x, y):
+        #Derecha
+        if x+1 < terrain.tam_col:
+            mascara.unmask_mask(x+1, y)
+        #Izquierda
+        if x-1 >= 0:
+            mascara.unmask_mask(x-1, y)
+        #Arriba
+        if y-1 >= 0:
+            mascara.unmask_mask(x, y-1)
+        #Abajo
+        if y+1 < terrain.tam_fila:
+            mascara.unmask_mask(x, y+1)
+
     #def one_sensor(self, pos_x, pos_y, offset_x, offset_y):
         #unmask la casilla en la que apunta
     #def four_sensors(self, pos_x, pos_y, offset_x, offset_y):

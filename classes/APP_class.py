@@ -341,21 +341,22 @@ class App:
         if event.type == pg.KEYDOWN and (not self.text_entry_line_5.is_focused and not self.text_entry_line_6.is_focused):
             if event.key == pg.K_a and (self.agent.x > 0):
                 #print(self.agent.x)
-                self.agent.mover_agente_left(self.terrain)
+                self.agent.mover_agente_left(self.terrain, self.mascara)
             elif event.key == pg.K_d and (self.agent.x < self.terrain.tam_col - 1):
                 #print(self.agent.x)
-                self.agent.mover_agente_right(self.terrain)
+                self.agent.mover_agente_right(self.terrain, self.mascara)
             elif event.key == pg.K_s and (self.agent.y < self.terrain.tam_fila - 1):
                 #print(self.agent.y)
-                self.agent.mover_agente_down(self.terrain)
+                self.agent.mover_agente_down(self.terrain, self.mascara)
             elif event.key == pg.K_w and (self.agent.y > 0):
                 #print(self.agent.y)
-                self.agent.mover_agente_up(self.terrain)
+                self.agent.mover_agente_up(self.terrain, self.mascara)
 
     def update_infoLabels(self):#cambiar costoacuimulado y movimientos
         if(self.initial == False and self.agent_type is not None):
             self.costo_acumulado.set_text("costo acumulado: " + str(self.agent.getCosto_acumulado()))
             self.cantidad_movimientos.set_text("Cantidad de movimientos" + str(self.agent.getCantidad_movimientos()))
+    
     #Funcion para definir el inicio, final, y agente a seleccionar
     def initial_screen(self):
         if self.terrain:
@@ -367,6 +368,7 @@ class App:
             if self.terrain.initial_point is not None and self.terrain.end_point is not None and self.agent_type is not None:
                 print("se selecciono")
                 self.agent = Agent(self.x_initial, self.y_initial,self.agent_type)
+                
                 self.initial = False
                 print("INITIAL ES F A L S O")
             #self.process_events()
@@ -594,6 +596,8 @@ class App:
                 #Crear Mascara
                 if self.obj_mask == True and self.initial == False:
                     self.mascara = Mask_map(self.terrain)
+                    #Desenmascara la posicion inicial
+                    self.agent.unmask_pos_ini(self.mascara, self.terrain)
                     self.obj_mask = False
                     print("Se ejecuto 1 vez")
 
