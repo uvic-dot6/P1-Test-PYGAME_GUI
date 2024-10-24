@@ -74,12 +74,6 @@ class Agent:
     def actualizar_nuevo_costo(self,nuevocosto):
         self.cantidad_movimientos+=1
         self.costo_acumulado+=nuevocosto
-    #def one_sensor(self, pos_x, pos_y, offset_x, offset_y):
-        #unmask la casilla en la que apunta
-    #def four_sensors(self, pos_x, pos_y, offset_x, offset_y):
-        #unmask las cuatro casillas alrededor
-    #def calculate_cost(self, pos_x, pos_y):
-        #self.costo_actual += cost_movement.get()
     def mover_agente_up(self,terrain):
         cell_value = terrain.matriz[self.y-1][self.x]
         cell_type = c.INT_TERRAIN.get(cell_value)
@@ -115,3 +109,10 @@ class Agent:
         return self.cantidad_movimientos
     def getCosto_acumulado(self):
         return self.costo_acumulado
+    
+    #def one_sensor(self, pos_x, pos_y, offset_x, offset_y):
+        #unmask la casilla en la que apunta
+    #def four_sensors(self, pos_x, pos_y, offset_x, offset_y):
+        #unmask las cuatro casillas alrededor
+    #def calculate_cost(self, pos_x, pos_y):
+        #self.costo_actual += cost_movement.get()

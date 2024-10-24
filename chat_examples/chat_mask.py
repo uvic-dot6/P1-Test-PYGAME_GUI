@@ -14,7 +14,7 @@ BLACK = (0, 0, 0)
 # Crear una superficie con un círculo
 #surface = pygame.Surface(window_size)
 #surface.fill(WHITE)
-pygame.dr aw.circle(window, BLUE, (300, 200), 150)
+pygame.draw.circle(window, BLUE, (300, 200), 150)
 
 # Crear una máscara del mismo tamaño que la superficie
 mask = pygame.Mask(window_size)
