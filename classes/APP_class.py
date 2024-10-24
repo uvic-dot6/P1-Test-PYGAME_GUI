@@ -104,7 +104,8 @@ class App:
         self.text_entry_line_5 = None
         self.text_entry_line_6 = None
         self.state="menu"
-        self.agent_type=None
+        self.agent_type=None 
+        self.agent=None
         """ Metododo para inicializar los botones """
         self.init_ui()
 
@@ -269,6 +270,20 @@ class App:
         self.text_entry_line_6.set_allowed_characters('alpha_numeric')
         self.text_entry_line_6.set_text_length_limit(3)
 
+        self.costo_acumulado = pgui.elements.UILabel(
+            relative_rect = pg.Rect((45, 200), (200, 20)),
+            text = 'Costo acumulado :',
+            manager = self.ui_manager,
+            container = self.side_panel_top,
+            visible = True  # Se crea invisible al principio
+        )
+        self.cantidad_movimientos = pgui.elements.UILabel(
+            relative_rect = pg.Rect((45, 240), (200, 20)),
+            text = 'Cantidad De movimientos:',
+            manager = self.ui_manager,
+            container = self.side_panel_top,
+            visible = True  # Se crea invisible al principio
+        )
     def abrir_explorador_archivos(self):
         # Crear una instancia de Tkinter y ocultar la ventana
         root = tk.Tk()
@@ -319,22 +334,22 @@ class App:
         if event.type == pg.KEYDOWN and (not self.text_entry_line_5.is_focused and not self.text_entry_line_6.is_focused):
             if event.key == pg.K_a and (self.agent.x > 0):
                 #print(self.agent.x)
-                self.agent.x -= 1  # Mover hacia la izquierda
-                self.agent.actualizar_costo(self.terrain)
+                self.agent.mover_agente_left(self.terrain)
             elif event.key == pg.K_d and (self.agent.x < self.terrain.tam_col - 1):
                 #print(self.agent.x)
-                self.agent.x += 1  # Mover hacia la derecha
-                self.agent.actualizar_costo(self.terrain)
+                self.agent.mover_agente_right(self.terrain)
             elif event.key == pg.K_s and (self.agent.y < self.terrain.tam_fila - 1):
                 #print(self.agent.y)
-                self.agent.y += 1  # Mover hacia abajo
-                self.agent.actualizar_costo(self.terrain)
+                self.agent.mover_agente_down(self.terrain)
             elif event.key == pg.K_w and (self.agent.y > 0):
                 #print(self.agent.y)
-                self.agent.y -= 1  # Mover hacia arriba
-                self.agent.actualizar_costo(self.terrain)
+                self.agent.mover_agente_up(self.terrain)
 
-
+    def update_infoLabels(self):#cambiar costoacuimulado y movimientos
+        if(self.initial ==False and self.agent_type is not None):
+            print("cambiando")
+            self.costo_acumulado.set_text("costo acumulado: " + str(self.agent.getCosto_acumulado()))
+            self.cantidad_movimientos.set_text("Cantidad de movimientos" + str(self.agent.getCantidad_movimientos()))
     #Funcion para definir el inicio, final, y agente a seleccionar
     def initial_screen(self):
         if self.terrain:
@@ -344,14 +359,8 @@ class App:
             self.text_entry_line_6.show()
             self.process_events()
             if self.terrain.initial_point is not None and self.terrain.end_point is not None and self.agent_type is not None:
-                if self.agent_type=="Human":
-                    self.agent = Agent_Human(self.x_initial, self.y_initial)
-                elif self.agent_type=="Monkey":
-                    self.agent = Agent_Monkey(self.x_initial, self.y_initial)
-                elif self.agent_type=="Octopus":
-                    self.agent = Agent_Octopus(self.x_initial, self.y_initial)
-                elif self.agent_type=="Sasquatch":
-                    self.agent = Agent_Sasquatch(self.x_initial, self.y_initial)
+                print("se selecciono")
+                self.agent = Agent(self.x_initial, self.y_initial,self.agent_type)
                 self.initial = False
                 print("INITIAL ES F A L S O")
             #self.process_events()
@@ -430,6 +439,7 @@ class App:
         self.current_position.show()
         self.text_entry_line_1.show()
         self.text_entry_line_2.show()
+        self.update_infoLabels()
 
     #PROCESADOR DE EVENTOS
     def process_events(self):
@@ -563,6 +573,9 @@ class App:
                         #self.update_ui(final_cell, self.terrain)
                         self.text_entry_line_6.redraw()
                         self.text_entry_line_6.disable()
+                        #cambiar costoacuimulado y movimientos
+            self.update_infoLabels()
+                        
 
     
 
