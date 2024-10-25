@@ -1,7 +1,7 @@
 import pygame as pg
 import constants as c
 from .DFS_class import DFS
-
+from .BFS_class import BFS
 from .TERRAIN_class import Terrain
 class Agent:
     pos_i = None
@@ -165,7 +165,9 @@ class Agent:
         dfs = DFS(self,self.terrain,self.ini_x,self.ini_y,self.terrain.getEndpoint_x(),self.terrain.getEndpoint_y())
         dfs.run()
     def resolverBFS(self):
-        print("resolucion por anchura")
+        print("resolucion por anchuragod")
+        bfs = BFS(self,self.terrain,self.ini_x,self.ini_y,self.terrain.getEndpoint_x(),self.terrain.getEndpoint_y())
+        bfs.run()
     def resolverAstar(self):
         print("resolucion por A estrella")
 
