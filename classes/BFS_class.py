@@ -1,15 +1,13 @@
-<<<<<<< HEAD
+
 from .AGENT_class import *
 from .TERRAIN_class import *
 from collections import deque
 import matplotlib.pyplot as plt
 import networkx as nx
-=======
+
 from collections import deque
 from .AGENT_class import *
 from .TERRAIN_class import *
->>>>>>> f52dfa78b536ee4c2ed9dd9a317844f5ca955285
-
 class BFS:
     def __init__(self, agent, terrain, x_ini, y_ini, x_fin, y_fin):
         self.agent = agent
@@ -19,7 +17,6 @@ class BFS:
         self.x_fin = x_fin
         self.y_fin = y_fin
         self.visited = set()  # Conjunto para guardar posiciones visitadas
-<<<<<<< HEAD
         self.tree = {}  # Diccionario para representar el árbol de búsqueda
         print(f"BFS iniciado con agente {self.agent.getAgent_type()} desde ({self.x_ini}, {self.y_ini}) hacia ({self.x_fin}, {self.y_fin})")
 
@@ -81,7 +78,6 @@ class BFS:
         nx.draw(G, pos, with_labels=True, node_color='lightgreen', font_weight='bold', node_size=700)
         plt.title("Árbol de Búsqueda BFS")
         plt.show()
-=======
         self.queue = deque([(x_ini, y_ini)])  # Cola para BFS
         print(f"BFS iniciado con agente {self.agent.getAgent_type()} desde ({self.x_ini}, {self.y_ini}) hacia ({self.x_fin}, {self.y_fin})")
 
@@ -111,4 +107,3 @@ class BFS:
                     self.queue.append((new_x, new_y))
 
         return False
->>>>>>> f52dfa78b536ee4c2ed9dd9a317844f5ca955285
