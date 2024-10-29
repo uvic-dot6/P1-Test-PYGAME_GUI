@@ -21,6 +21,7 @@ class Agent:
         self.meta_y=0
         self.terrain=None
         self.agent_type=agent_type
+        self.priority=None
         print(f"Posicion Inicial Agente: X:{self.x}, Y:{self.y}")
         self.velocidad = 1
         self.human = pg.Rect((self.x+1)*c.TILE_SIZE, (self.y+1)*c.TILE_SIZE, c.TILE_SIZE, c.TILE_SIZE)
@@ -84,10 +85,14 @@ class Agent:
         pg.draw.rect(screen, c.BLUE, self.human)
         self.screen.blit(self.image, ((self.x + 1) * c.TILE_SIZE + offset_x, (self.y + 1) * c.TILE_SIZE + offset_y))
         #screen.blit(self.image_human, ((self.x+1)*c.TILE_SIZE, (self.y+1)*c.TILE_SIZE))
+    def clear_agent_view(self, screen):
+        if self.human:
+            screen.fill(c.WHITE, self.human)
+            self.human = None
+
     def limpiarAnterior():
         pass
     def actualizar_nuevo_costo(self,nuevocosto):
-        self.draw_human(self.screen,0,0)
         self.cantidad_movimientos+=1
         self.costo_acumulado+=nuevocosto
         self.revisarPosiblesMovimientos(self.x,self.y)
@@ -132,7 +137,7 @@ class Agent:
             self.x += 1
             self.sensor_cuatro(terrain, self.mascara, self.x, self.y)
             self.actualizar_nuevo_costo(self.cost_movement.get(cell_type))
-    def mover_agente(self,terrain,movement):
+    def mover_agente(self,movement):
         if movement=="UP":
             self.mover_agente_up(self.terrain)
         elif movement=="DOWN":
@@ -158,6 +163,8 @@ class Agent:
             movimientos.append(((x+1, y), "RIGHT"))
         if len(movimientos) >2:
             self.terrain.addDecision(self.y,self.x)
+        if len(movimientos)==1:
+            self.terrain.addVisited(self.y,self.x)
         return movimientos
     def resolverDFS(self):
         print("resolucion por Profundidad")
@@ -221,3 +228,6 @@ class Agent:
         return self.meta_y
     def getAgent_type(self):
         return self.agent_type
+    def setPriority(self,priority):
+        self.priority=priority
+        print(self.priority)

@@ -297,7 +297,22 @@ class App:
         )
         self.text_entry_line_6.set_allowed_characters('alpha_numeric')
         self.text_entry_line_6.set_text_length_limit(3)
-
+        self.label_instrucctions_priority = pgui.elements.UILabel(
+            relative_rect = pg.Rect((150, 50), (80, 30)),
+            text = 'PRIORIDAD: ',
+            manager = self.ui_manager,
+            container = self.side_panel_midle,
+            visible = False  # Se crea invisible al principio
+        )
+        self.text_priority = pgui.elements.UITextEntryLine(
+            pg.Rect((150, 80), (80, 35)),
+            self.ui_manager,
+            container = self.side_panel_midle,
+            visible = False,
+            initial_text = 'ABDI'
+        )
+        self.text_priority.set_allowed_characters('letters')
+        self.text_priority.set_text_length_limit(4)
         self.costo_acumulado = pgui.elements.UILabel(
             relative_rect = pg.Rect((45, 200), (200, 20)),
             text = 'Costo acumulado :',
@@ -366,8 +381,8 @@ class App:
 
     def gestionar_teclas(self, event):
     # Verificar que el evento sea de tipo KEYDOWN
-        if event.type == pg.KEYDOWN and (not self.text_entry_line_5.is_focused and not self.text_entry_line_6.is_focused):
-            if event.key == pg.K_a and (self.agent.x > 0):
+        if event.type == pg.KEYDOWN and (not self.text_entry_line_5.is_focused and not self.text_entry_line_6.is_focused) and not self.text_priority.is_focused :
+            if event.key == pg.K_a and (self.agent.x > 0) :
                 #print(self.agent.x)
                 self.agent.mover_agente_left(self.terrain)
             elif event.key == pg.K_d and (self.agent.x < self.terrain.tam_col - 1):
@@ -396,7 +411,8 @@ class App:
             if self.terrain.initial_point is not None and self.terrain.end_point is not None and self.agent_type is not None:
                 print("se selecciono")
                 self.agent = Agent(self.x_initial, self.y_initial,self.agent_type)
-                
+                self.text_priority.show()
+                self.label_instrucctions_priority.show()
                 self.initial = False
                 print("INITIAL ES F A L S O")
             #self.process_events()
@@ -581,7 +597,14 @@ class App:
                     if event.ui_element == self.text_entry_line_2:
                         self.change_coordinate_X(self.text_entry_line_2.get_text())
                         self.text_entry_line_2.redraw()
-            
+                    if event.ui_element == self.text_priority:
+                        print("alkdfjlkadjl")
+                        priority = self.text_priority.get_text()
+                        priority_letters = priority.upper()
+                        self.text_priority.set_text(priority_letters)
+                        self.text_priority.redraw()
+                        self.text_priority.disable()
+                        self.agent.setPriority(priority_letters)       
             else:
                 if event.type == pg.USEREVENT and event.user_type == pgui.UI_TEXT_ENTRY_FINISHED:
                     if event.ui_element == self.text_entry_line_5:
@@ -607,7 +630,6 @@ class App:
                         #self.update_ui(final_cell, self.terrain)
                         self.text_entry_line_6.redraw()
                         self.text_entry_line_6.disable()
-                        #cambiar costoacuimulado y movimientos
             self.update_infoLabels()
                         
 

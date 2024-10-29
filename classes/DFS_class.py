@@ -39,7 +39,13 @@ class DFS:
         for move, mover in self.agent.revisarPosiblesMovimientos(x, y):
             new_x, new_y = move
             if (new_x, new_y) not in self.visited:  # Si no se ha visitado
-                self.agent.mover_agente(self.terrain, mover)
+                self.agent.mover_agente(mover)
+                self.agent.clear_agent_view(self.agent.screen)
+                self.agent.draw_human(self.agent.screen,0,0)
+                self.terrain.draw_i(self.agent.screen, 0,0)
+                self.terrain.draw_f(self.agent.screen, 0,0)
+                self.terrain.draw_v(self.agent.screen, 0,0)
+                self.terrain.draw_o(self.agent.screen, 0,0)
 
                 # Actualizar el árbol de búsqueda
                 self.tree[(x, y)].append((new_x, new_y))
