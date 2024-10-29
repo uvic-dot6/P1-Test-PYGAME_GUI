@@ -1,7 +1,8 @@
-from collections import deque
 from .AGENT_class import *
 from .TERRAIN_class import *
-
+from collections import deque
+import matplotlib.pyplot as plt
+import networkx as nx
 class BFS:
     def __init__(self, agent, terrain, x_ini, y_ini, x_fin, y_fin):
         self.agent = agent

@@ -102,19 +102,22 @@ class Agent:
         #unmask las cuatro casillas alrededor
     #def calculate_cost(self, pos_x, pos_y):
         #self.costo_actual += cost_movement.get()
-    def mover_agente_up(self,terrain):
+    def mover_agente_up(self, terrain):
         cell_value = terrain.matriz[self.y-1][self.x]
         cell_type = c.INT_TERRAIN.get(cell_value)
         if self.validar(cell_type):
             self.terrain.addVisited(self.y,self.x)
             self.y-=1
+            self.sensor_cuatro(terrain, self.mascara, self.x, self.y)
             self.actualizar_nuevo_costo(self.cost_movement.get(cell_type))
+
     def mover_agente_down(self, terrain):
         cell_value = terrain.matriz[self.y+1][self.x]
         cell_type = c.INT_TERRAIN.get(cell_value)
         if self.validar(cell_type):
             self.terrain.addVisited(self.y,self.x)
             self.y += 1
+            self.sensor_cuatro(terrain, self.mascara, self.x, self.y)
             self.actualizar_nuevo_costo(self.cost_movement.get(cell_type))
 
     def mover_agente_left(self, terrain):
@@ -123,6 +126,7 @@ class Agent:
         if self.validar(cell_type):
             self.terrain.addVisited(self.y,self.x)
             self.x -= 1
+            self.sensor_cuatro(terrain, self.mascara, self.x, self.y)
             self.actualizar_nuevo_costo(self.cost_movement.get(cell_type))
 
     def mover_agente_right(self, terrain):
@@ -131,6 +135,7 @@ class Agent:
         if self.validar(cell_type):
             self.terrain.addVisited(self.y,self.x)
             self.x += 1
+            self.sensor_cuatro(terrain, self.mascara, self.x, self.y)
             self.actualizar_nuevo_costo(self.cost_movement.get(cell_type))
     def mover_agente(self,movement):
         if movement=="UP":
@@ -156,7 +161,6 @@ class Agent:
             movimientos.append(((x-1, y), "LEFT"))
         if x < len(self.terrain.matriz[0])-1 and self.validar(c.INT_TERRAIN[self.terrain.matriz[y][x+1]]):  # Mover derecha
             movimientos.append(((x+1, y), "RIGHT"))
-        print(len(movimientos))
         if len(movimientos) >2:
             self.terrain.addDecision(self.y,self.x)
         if len(movimientos)==1:
@@ -180,8 +184,35 @@ class Agent:
         self.terrain=terrain
     def getCantidad_movimientos(self):
         return self.cantidad_movimientos
+    
     def getCosto_acumulado(self):
         return self.costo_acumulado
+    
+    def unmask_pos_ini(self, mascara, terrain):
+        self.mascara=mascara
+        mascara.unmask_mask(self.x, self.y)
+        self.sensor_cuatro(terrain, self.mascara, self.x, self.y)
+
+    def sensor_cuatro(self, terrain, mascara, x, y):
+        #Derecha
+        if x+1 < terrain.tam_col:
+            self.mascara.unmask_mask(x+1, y)
+        #Izquierda
+        if x-1 >= 0:
+            self.mascara.unmask_mask(x-1, y)
+        #Arriba
+        if y-1 >= 0:
+            self.mascara.unmask_mask(x, y-1)
+        #Abajo
+        if y+1 < terrain.tam_fila:
+            self.mascara.unmask_mask(x, y+1)
+
+    #def one_sensor(self, pos_x, pos_y, offset_x, offset_y):
+        #unmask la casilla en la que apunta
+    #def four_sensors(self, pos_x, pos_y, offset_x, offset_y):
+        #unmask las cuatro casillas alrededor
+    #def calculate_cost(self, pos_x, pos_y):
+        #self.costo_actual += cost_movement.get()
     def setMeta(self,x,y):
         self.meta_x=x
         self.meta_y=y
