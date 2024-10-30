@@ -19,6 +19,8 @@ class Nodo:
         row = str(x + 1)  # Sumamos 1 para empezar desde 1
         col = chr(ord('A') + y)  # Convertimos a la letra correspondiente
         return f"{row}{col}"
+    def setCosto(self,costo):
+        self.costo=costo
 
 class NodoInformado:
     def __init__(self, dato, g, movimientos, h):

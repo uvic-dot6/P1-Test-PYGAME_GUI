@@ -231,6 +231,8 @@ class Agent:
         return self.meta_y
     def getAgent_type(self):
         return self.agent_type
+    def setCosto(self,costo_acumulado):
+        self.costo_acumulado=costo_acumulado
     def setPriority(self,priority):
         self.priority=priority
         print(self.priority)

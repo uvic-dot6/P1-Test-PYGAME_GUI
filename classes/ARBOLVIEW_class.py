@@ -53,7 +53,7 @@ class SHOWTREE:
             while stack:
                 current, path = stack.pop(0)
                 if current.dato == nodo:
-                    labels[nodo] = f'{current.dato} costo {current.costo}'
+                    labels[nodo] = f'{current.dato}\n costo {current.costo}'
                     break
                 for hijo in current.hijos:
                     stack.append((hijo, path + [current]))
