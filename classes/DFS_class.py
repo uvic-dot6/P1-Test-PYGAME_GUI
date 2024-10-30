@@ -1,5 +1,6 @@
 from .AGENT_class import *
 from .TERRAIN_class import *
+from .ARBOLVIEW_class import *
 import matplotlib.pyplot as plt
 import networkx as nx
 
@@ -41,6 +42,8 @@ class DFS:
             if (new_x, new_y) not in self.visited:  # Si no se ha visitado
                 self.agent.mover_agente(mover)
                 self.agent.clear_agent_view(self.agent.screen)
+                # self.terrain.draw_matriz(self.agent.screen,0,0)
+                self.agent.mascara.draw_mask(0,0, self.terrain, self.agent.screen)
                 self.agent.draw_human(self.agent.screen,0,0)
                 self.terrain.draw_i(self.agent.screen, 0,0)
                 self.terrain.draw_f(self.agent.screen, 0,0)
@@ -59,17 +62,5 @@ class DFS:
         return False
 
     def mostrar_arbol(self):
-        # Usaremos la librería networkx para crear y mostrar el árbol
-        G = nx.DiGraph()
-
-        # Agregar nodos y bordes del árbol
-        for parent, children in self.tree.items():
-            for child in children:
-                G.add_edge(parent, child)
-
-        # Dibujar el grafo
-        pos = nx.spring_layout(G)  # Diseño del grafo
-        plt.figure(figsize=(8, 8))
-        nx.draw(G, pos, with_labels=True, node_color='lightblue', font_weight='bold', node_size=700)
-        plt.title("Árbol de Búsqueda DFS")
-        plt.show()
+        self.show_tree= SHOWTREE(self.tree)
+        self.show_tree.mostrar_arbol()

@@ -152,15 +152,18 @@ class Agent:
         return False
     def revisarPosiblesMovimientos(self,x,y):
         movimientos = []
-        # Definir posibles movimientos en base a la validación del agente y del terreno
-        if y > 0 and self.validar(c.INT_TERRAIN[self.terrain.matriz[y-1][x]]):  # Mover arriba
-            movimientos.append(((x, y-1), "UP"))
-        if y < len(self.terrain.matriz)-1 and self.validar(c.INT_TERRAIN[self.terrain.matriz[y+1][x]]):  # Mover abajo
-            movimientos.append(((x, y+1), "DOWN"))
-        if x > 0 and self.validar(c.INT_TERRAIN[self.terrain.matriz[y][x-1]]):  # Mover izquierda
-            movimientos.append(((x-1, y), "LEFT"))
-        if x < len(self.terrain.matriz[0])-1 and self.validar(c.INT_TERRAIN[self.terrain.matriz[y][x+1]]):  # Mover derecha
-            movimientos.append(((x+1, y), "RIGHT"))
+        posibles_movimientos = {
+            "A": ((x, y-1), "UP") if y > 0 and self.validar(c.INT_TERRAIN[self.terrain.matriz[y-1][x]]) else None,
+            "B": ((x, y+1), "DOWN") if y < len(self.terrain.matriz)-1 and self.validar(c.INT_TERRAIN[self.terrain.matriz[y+1][x]]) else None,
+            "D": ((x+1, y), "RIGHT") if x < len(self.terrain.matriz[0])-1 and self.validar(c.INT_TERRAIN[self.terrain.matriz[y][x+1]]) else None,
+            "I": ((x-1, y), "LEFT") if x > 0 and self.validar(c.INT_TERRAIN[self.terrain.matriz[y][x-1]]) else None,
+        }
+
+        # Añadir movimientos en el orden de la prioridad
+        for direction in self.priority:
+            movimiento = posibles_movimientos.get(direction)
+            if movimiento:
+                movimientos.append(movimiento)
         if len(movimientos) >2:
             self.terrain.addDecision(self.y,self.x)
         if len(movimientos)==1:
