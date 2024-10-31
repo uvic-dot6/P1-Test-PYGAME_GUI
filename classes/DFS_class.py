@@ -49,7 +49,6 @@ class DFS:
             ##para nodos por cada decison  
 
             if len(movimientos) > 2 or (len(movimientos) == 1 and nodo_padre is not self.nodo_raiz):
-                    
                     nuevo_nodo = Nodo(x, y, costo_acumulado, nodo_padre)
                     nodo_padre.hijos.append(nuevo_nodo)
                     nuevo_nodo.setCosto(costo_acumulado)
