@@ -2,6 +2,7 @@ import pygame as pg
 import constants as c
 from .DFS_class import DFS
 from .BFS_class import BFS
+from .A_class import AStar
 from .TERRAIN_class import Terrain
 class Agent:
     pos_i = None
@@ -85,6 +86,13 @@ class Agent:
         pg.draw.rect(screen, c.BLUE, self.human)
         self.screen.blit(self.image, ((self.x + 1) * c.TILE_SIZE + offset_x, (self.y + 1) * c.TILE_SIZE + offset_y))
         #screen.blit(self.image_human, ((self.x+1)*c.TILE_SIZE, (self.y+1)*c.TILE_SIZE))
+    def draw_agent_coordinates(self,x,y):
+        self.sensor_cuatro(self.terrain,self.mascara,x,y)
+        self.mascara.draw_mask(0, 0, self.terrain, self.screen)
+        self.human = pg.Rect((x+1) * c.TILE_SIZE  , (y+1) * c.TILE_SIZE , c.TILE_SIZE, c.TILE_SIZE)
+        pg.draw.rect(self.screen, c.BLUE, self.human)
+        self.screen.blit(self.image, ((x + 1) * c.TILE_SIZE , (y + 1) * c.TILE_SIZE ))
+        self.cantidad_movimientos+=1
     def clear_agent_view(self, screen):
         if self.human:
             screen.fill(c.WHITE, self.human)
@@ -95,7 +103,7 @@ class Agent:
     def actualizar_nuevo_costo(self,nuevocosto):
         self.cantidad_movimientos+=1
         self.costo_acumulado+=nuevocosto
-        self.revisarPosiblesMovimientos(self.x,self.y)
+        # self.revisarPosiblesMovimientos(self.x,self.y)
     #def one_sensor(self, pos_x, pos_y, offset_x, offset_y):
         #unmask la casilla en la que apunta
     #def four_sensors(self, pos_x, pos_y, offset_x, offset_y):
@@ -119,6 +127,7 @@ class Agent:
             self.y += 1
             self.sensor_cuatro(terrain, self.mascara, self.x, self.y)
             self.actualizar_nuevo_costo(self.cost_movement.get(cell_type))
+            print(f'posicion despues abajo {self.x} y: {self.y}')
 
     def mover_agente_left(self, terrain):
         cell_value = terrain.matriz[self.y][self.x-1]
@@ -164,10 +173,10 @@ class Agent:
             movimiento = posibles_movimientos.get(direction)
             if movimiento:
                 movimientos.append(movimiento)
-        if len(movimientos) >2:
-            self.terrain.addDecision(self.y,self.x)
-        if len(movimientos)==1:
-            self.terrain.addVisited(self.y,self.x)
+        # if len(movimientos) >2:
+        #     self.terrain.addDecision(self.y,self.x)
+        # if len(movimientos)==1:
+        #     self.terrain.addVisited(self.y,self.x)
         return movimientos
     def resolverDFS(self):
         print("resolucion por Profundidad")
@@ -178,7 +187,9 @@ class Agent:
         bfs = BFS(self,self.terrain,self.ini_x,self.ini_y,self.terrain.getEndpoint_x(),self.terrain.getEndpoint_y())
         bfs.run()
     def resolverAstar(self):
-        print("resolucion por A estrella")
+        a_star = AStar(self,self.terrain,self.ini_x,self.ini_y,self.terrain.getEndpoint_x(),self.terrain.getEndpoint_y())
+        a_star.run()
+        print("terminado")
 
 
     def limpiarAnterior():

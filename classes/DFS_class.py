@@ -38,6 +38,7 @@ class DFS:
             #cada decision
             nodo_meta = Nodo(x, y, costo_acumulado, 0)
             nodo_padre.hijos.append(nodo_meta)
+            nodo_meta.setMeta()
             self.agent.setCosto(costo_acumulado)  
             return True
         self.visited.add((x, y))
@@ -56,16 +57,18 @@ class DFS:
                 nuevo_nodo = nodo_padre 
 
             # Si el nodo no es la raíz, crear un nodo hijo con el costo acumulado
-            if (new_x, new_y) not in self.visited:  
-                    
+            if (new_x, new_y) not in self.visited:                   
                 costo_movimiento = self.agent.cost_movement.get(c.INT_TERRAIN.get(self.terrain.matriz[new_y][new_x]), 1)
                 nuevo_costo_acumulado = costo_acumulado + costo_movimiento
                 
                 #  muestreo de nodos paso a paso 
                 # nuevo_nodo = Nodo(new_x, new_y, nuevo_costo_acumulado, 0)
                 # nodo_padre.hijos.append(nuevo_nodo)
-
+                if len(movimientos) >2:
+                    self.terrain.addDecision(self.agent.y,self.agent.x)
                 self.agent.mover_agente(mover)
+                
+                self.terrain.addVisited(self.agent.y,self.agent.x)  
                 self.agent.clear_agent_view(self.agent.screen)
                 self.agent.mascara.draw_mask(0, 0, self.terrain, self.agent.screen)
                 self.agent.draw_human(self.agent.screen, 0, 0)
@@ -78,7 +81,8 @@ class DFS:
                 if self.dfs(new_x, new_y, nuevo_nodo, nuevo_costo_acumulado):
                     return True
 
-                self.agent.x, self.agent.y = x, y  # Regresar a la posición anterior
+                self.agent.x = x
+                self.agent.y = y  # Regresar a la posición anterior
 
         return False
 
