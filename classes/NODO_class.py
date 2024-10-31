@@ -25,7 +25,7 @@ class Nodo:
     def setMeta(self):
         self.meta=True
 class NodoInformado:
-    def __init__(self, x, y,costo,distancia):
+    def __init__(self, x, y,costo,distancia,movimientos):
         self.x = x
         self.y = y
         self.dato=self.pos_to_coordinate(y,x)
@@ -33,6 +33,7 @@ class NodoInformado:
         self.costo = costo
         self.heuristica=costo+distancia
         self.distancia=distancia
+        self.movimientos=movimientos
         self.padre = None
         self.hijos = []
         self.meta=False

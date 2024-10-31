@@ -107,6 +107,7 @@ class App:
         self.state="menu"
         self.agent_type=None 
         self.agent=None
+        self.priority=None
         """ Metododo para inicializar los botones """
         self.init_ui()
 
@@ -141,7 +142,7 @@ class App:
         )
         self.load_agent= pgui.elements.UIButton(
             relative_rect=pg.Rect((15,65), (200, 50)),
-            text='Seleccionar Agente',
+            text='Select Agent',
             manager = self.ui_manager,
             container = self.side_panel_bottom,
             object_id=ObjectID(class_id='@button_load_agent'),
@@ -535,11 +536,11 @@ class App:
                     self.current_view=None
                     self.current_view=SeleccionarAgente(self.screen,self.ui_manager)
                     self.state="agent"
-                if event.ui_element==self.bfs_button and self.agent is not None:
+                if event.ui_element==self.bfs_button and self.agent is not None and self.priority is not None:
                     self.agent.resolverBFS()
-                if event.ui_element==self.dfs_button and self.agent is not None:
+                if event.ui_element==self.dfs_button and self.agent is not None and self.priority is not None:
                     self.agent.resolverDFS()
-                if event.ui_element==self.Astar_button and self.agent is not None:
+                if event.ui_element==self.Astar_button and self.agent is not None and self.priority is not None:
                     self.agent.resolverAstar()
             if self.state=="agent" :
                     self.current_view.process_events(event)
@@ -599,8 +600,8 @@ class App:
                         self.text_entry_line_2.redraw()
                     if event.ui_element == self.text_priority:
                         print("alkdfjlkadjl")
-                        priority = self.text_priority.get_text()
-                        priority_letters = priority.upper()
+                        self.priority = self.text_priority.get_text()
+                        priority_letters = self.priority.upper()
                         self.text_priority.set_text(priority_letters)
                         self.text_priority.redraw()
                         self.text_priority.disable()
