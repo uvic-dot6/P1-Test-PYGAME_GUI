@@ -17,6 +17,7 @@ class DFS:
         self.movimientos= 0
         self.nodo = Nodo(x_ini,  y_ini, 0,0)
         self.nodo_raiz = self.nodo 
+        self.camino=[]
         self.visited = set()  # Conjunto para guardar posiciones visitadas
         self.tree = {}  # Diccionario para representar el árbol de búsqueda
         print(f"DFS iniciado con agente {self.agent.getAgent_type()} desde ({self.x_ini}, {self.y_ini}) hacia ({self.x_fin}, {self.y_fin})")
@@ -24,6 +25,7 @@ class DFS:
     def run(self):
         if self.dfs(self.x_ini, self.y_ini,self.nodo_raiz) == True:
             print("Solución encontrada.")
+            print(f'Camino: {self.camino}')
         else:
             print("No se encontró solución.")
         self.mostrar_arbol()
@@ -46,25 +48,31 @@ class DFS:
         movimientos = self.agent.revisarPosiblesMovimientos(x, y)
         for move, mover in movimientos:
             new_x, new_y = move
-            ##para nodos por cada decison  
-
+            '''
+                    muestreo de nodos por decision 
+            '''
             if len(movimientos) > 2 or (len(movimientos) == 1 and nodo_padre is not self.nodo_raiz):
-                    nuevo_nodo = Nodo(x, y, costo_acumulado, nodo_padre)
+                    nuevo_nodo = Nodo(x, y, costo_acumulado, None)
                     nodo_padre.hijos.append(nuevo_nodo)
-                    nuevo_nodo.setCosto(costo_acumulado)
+                    nuevo_nodo.setCosto(costo_acumulado)  
             else:
                 nuevo_nodo = nodo_padre 
-
+            
             # Si el nodo no es la raíz, crear un nodo hijo con el costo acumulado
             if (new_x, new_y) not in self.visited:                   
                 costo_movimiento = self.agent.cost_movement.get(c.INT_TERRAIN.get(self.terrain.matriz[new_y][new_x]), 1)
                 nuevo_costo_acumulado = costo_acumulado + costo_movimiento
                 
-                #  muestreo de nodos paso a paso 
+                '''
+                    muestreo de nodos paso a paso 
+                '''
                 # nuevo_nodo = Nodo(new_x, new_y, nuevo_costo_acumulado, 0)
                 # nodo_padre.hijos.append(nuevo_nodo)
+                if nuevo_nodo==self.nodo_raiz:
+                    self.camino.append(mover)
                 if len(movimientos) >2:
                     self.terrain.addDecision(self.agent.y,self.agent.x)
+                    self.camino.append(mover)
                 self.agent.mover_agente(mover)
                 
                 self.terrain.addVisited(self.agent.y,self.agent.x)  
@@ -79,7 +87,9 @@ class DFS:
                 # Llamada recursiva pasando el nuevo nodo y el costo acumulado actualizado
                 if self.dfs(new_x, new_y, nuevo_nodo, nuevo_costo_acumulado):
                     return True
-
+                if len(movimientos)> 2 or len(movimientos)==1: self.camino.pop()
+                if nuevo_nodo == self.nodo_raiz:
+                    self.camino.pop()
                 self.agent.x = x
                 self.agent.y = y  # Regresar a la posición anterior
 
