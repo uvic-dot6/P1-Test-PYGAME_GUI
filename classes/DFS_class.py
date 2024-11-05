@@ -58,7 +58,7 @@ class DFS:
             else:
                 nuevo_nodo = nodo_padre 
             
-            # Si el nodo no es la raíz, crear un nodo hijo con el costo acumulado
+            # crear un nodo hijo con el costo acumulado
             if (new_x, new_y) not in self.visited:                   
                 costo_movimiento = self.agent.cost_movement.get(c.INT_TERRAIN.get(self.terrain.matriz[new_y][new_x]), 1)
                 nuevo_costo_acumulado = costo_acumulado + costo_movimiento
@@ -70,6 +70,8 @@ class DFS:
                 # nodo_padre.hijos.append(nuevo_nodo)
                 if nuevo_nodo==self.nodo_raiz:
                     self.camino.append(mover)
+                    if costo_acumulado!=self.nodo_raiz.costo:
+                        self.camino.pop()
                 if len(movimientos) >2:
                     self.terrain.addDecision(self.agent.y,self.agent.x)
                     self.camino.append(mover)

@@ -70,7 +70,8 @@ class BFS:
 
                     if (new_x, new_y) == (self.x_fin, self.y_fin):
                         nuevo_nodo.setMeta()
-                        self.camino = nuevo_nodo.movimientos  # Guardar el camino final en self.camino
+                        self.camino = nuevo_nodo.movimientos  
+                        return True# Guardar el camino final en self.camino
                         break
 
                     if len(movimientos) > 2:
